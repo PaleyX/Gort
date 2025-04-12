@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gort", "Gort\Gort.csproj", "{575E8589-BC09-4220-A28C-E60F4F1062EE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{575E8589-BC09-4220-A28C-E60F4F1062EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{575E8589-BC09-4220-A28C-E60F4F1062EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{575E8589-BC09-4220-A28C-E60F4F1062EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{575E8589-BC09-4220-A28C-E60F4F1062EE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {61B2F8F6-506A-4931-97DB-E710122AAC09}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,17 @@
+﻿: "Start"
+i 0
+[ i < 10
+	i i+1
+	: i
+	{ i % 2 == 0 
+		: "MOD"
+		{ i == 4 
+			: "FOUR"
+		}
+	}
+]
+
+s substr("Hello", 1, 2)
+: s
+
+: "End"
