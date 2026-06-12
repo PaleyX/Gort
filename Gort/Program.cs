@@ -8,7 +8,7 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        for (; ;) 
+        for (; ; )
         {
             Console.Write("> ");
             var command = Console.ReadLine()?.Trim();
@@ -21,33 +21,56 @@ internal class Program
             switch (command[0])
             {
                 case '$':
-                    
+                    GetVariable(command[1..]);
                     break;
                 case '&':
-                    var firstCommand = CompileProgram(command[1..]);
-                    RunProgram(firstCommand);
+                    CompileProgram(command[1..]);
+                    if (Environment.First != null)
+                    {
+                        RunProgram();
+                    }
                     break;
                 default:
-                    Console.WriteLine($"Error: Unknown command '{command[0]}'");
+                    var result =Tools.GetAst(command).Interpret(Environment.Variables);
+                    Console.WriteLine(result);
                     break;
             }
         }
     }
 
-    private static void RunProgram(CommandBase? command)
+    private static void GetVariable(string line)
     {
-        while(command != null)
+        var pos = line.IndexOf(' ');
+        var variable = line[..pos];
+        var value = line[(pos + 1)..];
+        Environment.Variables[variable] = Tools.GetAst(value).Interpret(Environment.Variables);
+    }
+
+    private static void RunProgram()
+    {
+        var command = Environment.First;
+
+        try
         {
-            command = command.Execute();
+            while (command != null)
+            {
+                command = command.Execute();
+            }
+        }
+        catch (AssertException ae)
+        {
+            Console.WriteLine($"Assert on line {command.LineNumber}: {ae.Message}");
         }
     }
 
-    static CommandBase? CompileProgram(string programPath)
+    private static void CompileProgram(string programPath)
     {
+        Environment.Reset();
+
         var source = LoadProgram(programPath);
         if (string.IsNullOrWhiteSpace(source))
         {
-            return null;
+            return;
         }
 
         int lineNumber = 0;
@@ -58,9 +81,6 @@ internal class Program
         try
         {
             var lines = source.Split([System.Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
-
-            CommandBase? first = null;
-            CommandBase? last = null;
 
             foreach (var rawLine in lines)
             {
@@ -74,7 +94,7 @@ internal class Program
                 }
 
                 // special case for unadorned assign
-                if (commandList.Contains(line[0]) == false && IsIdentifier(line))
+                if (!commandList.Contains(line[0]) && IsIdentifier(line))
                 {
                     line = "$" + line;
                 }
@@ -87,32 +107,49 @@ internal class Program
                     continue;
                 }
 
-                if(first == null)
+                // special case for 'else'
+                if(command is CommandIf && line.Trim().Length == 1)
                 {
-                    first = command;
+                    command = new CommandElse(lineNumber);
+                }
+
+                if(Environment.First == null)
+                {
+                    Environment.First = command;
                 }
                 else
                 {
-                    last.Next = command;
+                    Environment.Last.Next = command;
                 }
 
-                last = command;
-
                 command.Compile(line[1..]);
+
+                Environment.Last = command;
             }
 
-            return first;
-
+            if(Environment.Stack.Count > 0)
+            {
+                throw new CompileTimeException($"Error: Unmatched '{Environment.Stack.Peek().GetType().Name}' at line {lineNumber}");
+            }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error compiling program: {ex.Message} - line {lineNumber}");
             errors++;
-            return null;
+        }
+
+        if(errors > 0)
+        {
+            Console.WriteLine($"Compilation failed with {errors} errors.");
+            Environment.Reset();
+        }
+        else
+        {
+            Console.WriteLine("Compilation successful.");
         }
     }
 
-    static string LoadProgram(string programPath)
+    private static string LoadProgram(string programPath)
     {
         try
         {

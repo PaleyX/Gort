@@ -15,7 +15,8 @@ internal class CommandEndLoop(int lineNumber) : CommandBase(lineNumber)
         if(Environment.Stack.Peek() is CommandLoop loop)
         {
             _loop = loop;
-            loop.Jump = this;
+            _loop.Jump = this;
+            _loop.SetBreaks(this);
             Environment.Stack.Pop();
         }
         else

@@ -6,14 +6,11 @@ namespace Gort.Commands;
 internal class CommandLoop(int lineNumber) : CommandBase(lineNumber)
 {
     private AstRunner? _astRunner;
+    private List<CommandBreak>? _breaks;
 
     internal override void Compile(string line)
     {
-        if (string.IsNullOrWhiteSpace(line))
-        {
-            _astRunner = null;
-        }
-        else
+        if (!string.IsNullOrWhiteSpace(line))
         {
             _astRunner = Tools.GetAst(line);
         }
@@ -34,11 +31,29 @@ internal class CommandLoop(int lineNumber) : CommandBase(lineNumber)
         {
             return b ? Next : Jump?.Next;
         }
-        else
-        {
-            throw new RunTimeException($"Loop guard must evaluate to boolean. Line {LineNumber}");
-        }
+
+        throw new RunTimeException($"Loop guard must evaluate to boolean. Line {LineNumber}");
     }
 
     internal CommandBase? Jump { get; set; }
+
+    internal void RegisterBreak(CommandBreak commandBreak)
+    {
+        _breaks ??= new();
+
+        _breaks.Add(commandBreak);
+    }
+
+    internal void SetBreaks(CommandEndLoop endLoop)
+    {
+        if (_breaks == null)
+        {
+            return;
+        }
+
+        foreach (var commandBreak in _breaks)
+        {
+            commandBreak.Jump = endLoop;
+        }
+    }
 }

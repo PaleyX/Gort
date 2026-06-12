@@ -1,0 +1,29 @@
+n 1
+[ n <= 100
+
+    r false
+
+    { n >= 2 
+        { n == 2
+            r true
+        }
+        { n % 2 != 0
+            limit sqrt(n)
+            i 3
+            r true
+            [ i <= limit
+                { n % i == 0
+                    r false
+                    !
+                }
+                i i+2
+            ]
+        }
+    }
+
+    { r
+        : format("{0} is Prime", n)
+    }
+
+    n n+1
+]

@@ -1,5 +1,3 @@
 ﻿namespace Gort;
 
-internal class RunTimeException(string message) : Exception(message)
-{
-}
+internal class RunTimeException(string message) : Exception(message);

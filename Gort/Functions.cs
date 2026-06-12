@@ -1,28 +1,50 @@
 ﻿using PaleyExpressions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Gort
+namespace Gort;
+
+internal static class Functions
 {
-    internal class Functions
+    [Function("substr")]
+    public static string Substr(string text, double start, double length)
     {
-        [Function("substr")]
-        public static string Substr(string text, double start, double end)
-        {
-            if (start < 0 || end < 0 || start >= text.Length || end >= text.Length)
-            {
-                throw new ArgumentOutOfRangeException("Start or end index is out of range.");
-            }
-
-            if (start > end)
-            {
-                throw new ArgumentException("Start index cannot be greater than end index.");
-            }
-
-            return text.Substring((int)start, (int)end - (int)start + 1);
-        }
+        return text[(int)start..(int)(start + length)];
     }
+
+    [Function("format")]
+    public static string Format(string text, params object?[] args)
+    {
+        return string.Format(text, args);
+    }
+
+    [Function("assert")]
+    public static bool Assert(bool test, string text)
+    {
+        if (!test)
+        {
+            throw new AssertException(text);
+        }
+
+        return test;
+    }
+
+    [Function("car")]
+    public static string Car(string text)
+    {
+        return text.Length > 0 ? text[0].ToString() : string.Empty;
+    }
+
+    [Function("cdr")]
+    public static string Cdr(string text)
+    {
+        return text.Length > 1 ? text[1..] : string.Empty;
+    }
+
+    [Function("len")]
+    public static double Len(string text)
+    {
+        return text.Length;
+    }
+
+    [Function("sqrt")]
+    public static double Sqrt(double n) => Math.Sqrt(n);
 }

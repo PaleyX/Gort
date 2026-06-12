@@ -2,21 +2,33 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Programs\Billion.txt" />
+    <None Remove="Programs\BitCount.txt" />
     <None Remove="Programs\First.txt" />
+    <None Remove="Programs\FizzBuzz.txt" />
+    <None Remove="Programs\IsPalindrome.txt" />
+    <None Remove="Programs\Primes.txt" />
+    <None Remove="Programs\ReverseString.txt" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Programs\Billion.txt" />
+    <EmbeddedResource Include="Programs\BitCount.txt" />
     <EmbeddedResource Include="Programs\First.txt" />
+    <EmbeddedResource Include="Programs\FizzBuzz.txt" />
+    <EmbeddedResource Include="Programs\IsPalindrome.txt" />
+    <EmbeddedResource Include="Programs\Primes.txt" />
+    <EmbeddedResource Include="Programs\ReverseString.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PaleyExpressions" Version="0.0.3-local" />
+    <PackageReference Include="PaleyExpressions" Version="0.0.6-local" />
   </ItemGroup>
 
 </Project>
