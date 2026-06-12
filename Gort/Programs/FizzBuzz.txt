@@ -1,0 +1,25 @@
+i 1
+
+[ i <= 100
+
+	fizz i % 3 == 0
+	buzz i % 5 == 0
+
+	{ fizz and buzz
+		: "Fizz Buzz"
+	}
+
+	{ fizz and !buzz
+		: "Fizz"
+	}
+
+	{ buzz and !fizz
+		: "Buzz"
+	}
+
+	{ !fizz and !buzz
+		: i
+	}
+
+	i i + 1
+]

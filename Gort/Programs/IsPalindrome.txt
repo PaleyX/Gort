@@ -1,0 +1,10 @@
+^ set s to be the string to test
+
+o s
+r ""
+[ s != ""
+	r car(s) + r
+	s s << 1
+]
+
+: o == r

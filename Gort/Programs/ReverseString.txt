@@ -1,0 +1,10 @@
+^ set s as the string to reverse
+
+r ""
+
+[ s != ""
+	r car(s) + r
+	s s << 1
+]
+
+: r
