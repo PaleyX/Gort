@@ -7,12 +7,17 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+	<PropertyGroup>
+		<DefineConstants>DEBUG;TRACE;USE_EXPRESSION</DefineConstants>
+	</PropertyGroup>
+
   <ItemGroup>
     <None Remove="Programs\Billion.txt" />
     <None Remove="Programs\BitCount.txt" />
     <None Remove="Programs\First.txt" />
     <None Remove="Programs\FizzBuzz.txt" />
     <None Remove="Programs\IsPalindrome.txt" />
+    <None Remove="Programs\Million.txt" />
     <None Remove="Programs\Primes.txt" />
     <None Remove="Programs\ReverseString.txt" />
   </ItemGroup>
@@ -23,12 +28,13 @@
     <EmbeddedResource Include="Programs\First.txt" />
     <EmbeddedResource Include="Programs\FizzBuzz.txt" />
     <EmbeddedResource Include="Programs\IsPalindrome.txt" />
+    <EmbeddedResource Include="Programs\Million.txt" />
     <EmbeddedResource Include="Programs\Primes.txt" />
     <EmbeddedResource Include="Programs\ReverseString.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PaleyExpressions" Version="0.0.6-local" />
+    <PackageReference Include="PaleyExpressions" Version="0.0.13-local" />
   </ItemGroup>
 
 </Project>

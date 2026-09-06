@@ -1,22 +1,22 @@
-﻿using PaleyExpressions;
+﻿using PaleyExpressions.Runners;
 
 namespace Gort.Commands;
 
 [Command('{')]
 internal class CommandIf(int lineNumber) : CommandBase(lineNumber)
 {
-    private AstRunner? _astRunner;
+    private IRunner? _runner;
 
     internal override void Compile(string line)
     {
-        _astRunner = Tools.GetAst(line);
+        _runner = Tools.GetRunner(line);
 
         Environment.Stack.Push(this);
     }
 
     internal override CommandBase? Execute()
     {
-        var result = _astRunner?.Interpret(Environment.Variables);
+        var result = _runner?.Interpret(Environment.Variables);
 
         if (result is bool b)
         {

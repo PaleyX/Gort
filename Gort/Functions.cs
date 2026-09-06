@@ -47,4 +47,18 @@ internal static class Functions
 
     [Function("sqrt")]
     public static double Sqrt(double n) => Math.Sqrt(n);
+
+    [Function("cond")]
+    public static object? Cond(params Func<object?>[] args)
+    {
+        for (int i = 0; i < args.Length; i += 2)
+        {
+            if (args[i]() is true)
+            {
+                return args[i + 1]();
+            }
+        }
+
+        return null;
+    }
 }

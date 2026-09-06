@@ -55,12 +55,15 @@ i 1
 [ i < 10
 	[
 		!
-		_ assert(true, "should never see this")
+		_ assert(false, "should never see this")
 	]
 
 	! i == 7
+
+	i i+1
 ]
-_ assert(i != 7, "i should equal 7")
+_ assert(i == 7, "i should equal 7")
 
 : "End"
+
 
