@@ -1,20 +1,20 @@
-﻿using PaleyExpressions;
+﻿using PaleyExpressions.Runners;
 
 namespace Gort.Commands;
 
 [Command(':')]
 internal class CommandDisplay(int lineNumber) : CommandBase(lineNumber)
 {
-    private AstRunner _astRunner;
+    private IRunner _runner;
 
     internal override void Compile(string line)
     {
-        _astRunner = Tools.GetAst(line);
+        _runner = Tools.GetRunner(line);
     }
 
     internal override CommandBase? Execute()
     {
-        Console.WriteLine(_astRunner.Interpret(Environment.Variables));
+        Console.WriteLine(_runner.Interpret(Environment.Variables));
 
         return Next;
     }

@@ -1,12 +1,13 @@
-﻿using Gort.Commands;
+﻿using System.Diagnostics;
+using Gort.Commands;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace Gort;
 
-internal class Program
+internal static class Program
 {
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
         for (; ; )
         {
@@ -24,14 +25,17 @@ internal class Program
                     GetVariable(command[1..]);
                     break;
                 case '&':
-                    CompileProgram(command[1..]);
-                    if (Environment.First != null)
+                    if(command.StartsWith("&&"))
                     {
-                        RunProgram();
+                        RunTimedProgram(command[2..]);
+                    }
+                    else
+                    {
+                        RunProgram(command[1..]);
                     }
                     break;
                 default:
-                    var result =Tools.GetAst(command).Interpret(Environment.Variables);
+                    var result = Tools.GetRunner(command.StripNumericUnderscores()).Interpret(Environment.Variables);
                     Console.WriteLine(result);
                     break;
             }
@@ -40,18 +44,42 @@ internal class Program
 
     private static void GetVariable(string line)
     {
-        var pos = line.IndexOf(' ');
-        var variable = line[..pos];
-        var value = line[(pos + 1)..];
-        Environment.Variables[variable] = Tools.GetAst(value).Interpret(Environment.Variables);
+        try
+        {
+            var pos = line.IndexOf(' ');
+            var variable = line[..pos];
+            var value = line[(pos + 1)..];
+            Environment.Variables[variable] = Tools.GetRunner(value).Interpret(Environment.Variables);
+        }
+        catch (Exception e)
+        {
+            Tools.WriteError($"Error setting variable: {e.Message}");
+        }
     }
 
-    private static void RunProgram()
+    private static void RunTimedProgram(string programName)
     {
-        var command = Environment.First;
+        var stopwatch = Stopwatch.StartNew();
+
+        RunProgram(programName);
+
+        stopwatch.Stop();
+
+        // Display elapsed time in various formats
+        Tools.WriteInfo($"Elapsed Time: {stopwatch.ElapsedMilliseconds} ms");
+        Tools.WriteInfo($"Elapsed Time: {stopwatch.Elapsed.TotalSeconds:F4} seconds");
+    }
+    
+    private static void RunProgram(string programName)
+    {
+        CommandBase? command = null;
 
         try
         {
+            CompileProgram(programName);
+
+            command = Environment.First;
+
             while (command != null)
             {
                 command = command.Execute();
@@ -59,7 +87,7 @@ internal class Program
         }
         catch (AssertException ae)
         {
-            Console.WriteLine($"Assert on line {command.LineNumber}: {ae.Message}");
+            Tools.WriteError($"Assert on line {command?.LineNumber.ToString() ?? "<unknown>"}: {ae.Message}");
         }
     }
 
@@ -86,7 +114,7 @@ internal class Program
             {
                 ++lineNumber;
 
-                var line = rawLine.Trim();
+                var line = rawLine.Trim().StripNumericUnderscores();
 
                 if (string.IsNullOrWhiteSpace(line) || line[0] == '^')
                 {
@@ -134,18 +162,18 @@ internal class Program
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error compiling program: {ex.Message} - line {lineNumber}");
+            Tools.WriteError($"Error compiling program: {ex.Message} - line {lineNumber}");
             errors++;
         }
 
         if(errors > 0)
         {
-            Console.WriteLine($"Compilation failed with {errors} errors.");
+            Tools.WriteError($"Compilation failed with {errors} errors.");
             Environment.Reset();
         }
         else
         {
-            Console.WriteLine("Compilation successful.");
+            Tools.WriteInfo("Compilation successful.");
         }
     }
 
@@ -162,7 +190,7 @@ internal class Program
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading program: {ex.Message}");
+            Tools.WriteError($"Error loading program: {ex.Message}");
             return string.Empty;
         }
     }

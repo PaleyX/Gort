@@ -1,11 +1,11 @@
-﻿using PaleyExpressions;
+﻿using PaleyExpressions.Runners;
 
 namespace Gort.Commands;
 
 [Command('!')]
 internal class CommandBreak(int lineNumber) : CommandBase(lineNumber)
 {
-    private AstRunner? _astRunner;
+    private IRunner? _runner;
 
     internal override void Compile(string line)
     {
@@ -19,18 +19,18 @@ internal class CommandBreak(int lineNumber) : CommandBase(lineNumber)
 
         if (!string.IsNullOrWhiteSpace(line))
         {
-            _astRunner = Tools.GetAst(line);
+            _runner = Tools.GetRunner(line);
         }
     }
 
     internal override CommandBase? Execute()
     {
-        if (_astRunner == null)
+        if (_runner == null)
         {
             return Jump.Next;
         }
 
-        var result = _astRunner.Interpret(Environment.Variables);
+        var result = _runner.Interpret(Environment.Variables);
 
         if (result is bool b)
         {

@@ -1,4 +1,4 @@
-﻿using PaleyExpressions;
+﻿using PaleyExpressions.Runners;
 using System.Text.RegularExpressions;
 
 namespace Gort.Commands;
@@ -7,7 +7,8 @@ namespace Gort.Commands;
 internal class CommandAssign(int lineNumber) : CommandBase(lineNumber)
 {
     private string _variableName;
-    private AstRunner _astRunner;
+
+    private IRunner _runner;
 
     internal override void Compile(string line)
     {
@@ -21,7 +22,7 @@ internal class CommandAssign(int lineNumber) : CommandBase(lineNumber)
 
         if (Regex.IsMatch(_variableName, Environment.IdentifierPattern))
         {
-            _astRunner = Tools.GetAst(line[(index + 1)..].Trim());
+            _runner = Tools.GetRunner(line[(index + 1)..].Trim());
         }
         else
         {
@@ -31,7 +32,7 @@ internal class CommandAssign(int lineNumber) : CommandBase(lineNumber)
 
     internal override CommandBase? Execute()
     {
-        var result = _astRunner.Interpret(Environment.Variables);
+        var result = _runner.Interpret(Environment.Variables);
 
         Environment.Variables[_variableName] = result;
 

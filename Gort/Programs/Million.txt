@@ -1,0 +1,8 @@
+^ just counts to 1 million 
+
+n 0
+[ n != 1000_000
+	n n + 1
+]
+
+: n

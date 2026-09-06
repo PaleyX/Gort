@@ -1,18 +1,18 @@
-﻿using PaleyExpressions;
+﻿using PaleyExpressions.Runners;
 
 namespace Gort.Commands;
 
 [Command('[')]
 internal class CommandLoop(int lineNumber) : CommandBase(lineNumber)
 {
-    private AstRunner? _astRunner;
+    private IRunner? _runner;
     private List<CommandBreak>? _breaks;
 
     internal override void Compile(string line)
     {
         if (!string.IsNullOrWhiteSpace(line))
         {
-            _astRunner = Tools.GetAst(line);
+            _runner = Tools.GetRunner(line);
         }
 
         Environment.Stack.Push(this);
@@ -20,12 +20,12 @@ internal class CommandLoop(int lineNumber) : CommandBase(lineNumber)
 
     internal override CommandBase? Execute()
     {
-        if(_astRunner == null)
+        if(_runner == null)
         {
             return Next;
         }
 
-        var result = _astRunner.Interpret(Environment.Variables);
+        var result = _runner.Interpret(Environment.Variables);
 
         if(result is bool b)
         {
@@ -39,7 +39,7 @@ internal class CommandLoop(int lineNumber) : CommandBase(lineNumber)
 
     internal void RegisterBreak(CommandBreak commandBreak)
     {
-        _breaks ??= new();
+        _breaks ??= [];
 
         _breaks.Add(commandBreak);
     }
