@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PaleyExpressions" Version="0.0.13-local" />
+    <PackageReference Include="PaleyExpressions" Version="0.0.16-Pre" />
   </ItemGroup>
 
 </Project>
