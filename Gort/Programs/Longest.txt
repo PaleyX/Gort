@@ -1,0 +1,38 @@
+^ finds the longest substring in a string
+^ without repeating characters
+
+^s "abcabcbb"
+s "Jonathan"
+
+start 0
+maxLength 0
+maxStart 0
+
+end 0
+
+[ end < len(s)
+	current substr(s, end, 1)
+
+	^ does current exist in the current window?
+	k start
+	[ k < end
+		{ substr(s, k, 1) == current
+			start k + 1
+			!
+		}
+
+		k k + 1
+	]
+
+	^ calculate the length of the current window
+	currentLength end - start + 1
+
+	{ currentLength > maxLength
+		maxLength currentLength
+		maxStart start
+	}
+
+	end end + 1
+]
+
+: substr(s, maxStart, maxLength)
