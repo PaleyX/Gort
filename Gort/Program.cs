@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Gort;
 
-internal static class Program
+public static class Program
 {
     private static void Main(string[] args)
     {
@@ -19,25 +19,35 @@ internal static class Program
                 continue;
             }
 
-            switch (command[0])
+            try
             {
-                case '$':
-                    GetVariable(command[1..]);
-                    break;
-                case '&':
-                    if(command.StartsWith("&&"))
-                    {
-                        RunTimedProgram(command[2..]);
-                    }
-                    else
-                    {
-                        RunProgram(command[1..]);
-                    }
-                    break;
-                default:
-                    var result = Tools.GetRunner(command.StripNumericUnderscores()).Interpret(Environment.Variables);
-                    Console.WriteLine(result);
-                    break;
+                switch (command[0])
+                {
+                    case '$':
+                        GetVariable(command[1..]);
+                        break;
+                    case '&':
+                        if (command.StartsWith("&&"))
+                        {
+                            var text = GetEmbeddedProgram(command[2..]);
+                            RunTimedProgram(text);
+                        }
+                        else
+                        {
+                            var text = GetEmbeddedProgram(command[1..]);
+                            RunProgram(text);
+                        }
+                        break;
+                    default:
+                        var result = Tools.GetRunner(command.StripNumericUnderscores())
+                            .Interpret(Environment.Variables);
+                        Console.WriteLine(result);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Tools.WriteError($"Error: {ex.Message}");
             }
         }
     }
@@ -57,11 +67,11 @@ internal static class Program
         }
     }
 
-    private static void RunTimedProgram(string programName)
+    private static void RunTimedProgram(string programText)
     {
         var stopwatch = Stopwatch.StartNew();
 
-        RunProgram(programName);
+        RunProgram(programText);
 
         stopwatch.Stop();
 
@@ -70,13 +80,13 @@ internal static class Program
         Tools.WriteInfo($"Elapsed Time: {stopwatch.Elapsed.TotalSeconds:F4} seconds");
     }
     
-    private static void RunProgram(string programName)
+    private static void RunProgram(string programText)
     {
         CommandBase? command = null;
 
         try
         {
-            CompileProgram(programName);
+            CompileProgram(programText);
 
             command = Environment.First;
 
@@ -91,11 +101,10 @@ internal static class Program
         }
     }
 
-    private static void CompileProgram(string programPath)
+    private static void CompileProgram(string source)
     {
         Environment.Reset();
 
-        var source = LoadProgram(programPath);
         if (string.IsNullOrWhiteSpace(source))
         {
             return;
@@ -177,7 +186,7 @@ internal static class Program
         }
     }
 
-    private static string LoadProgram(string programPath)
+    private static string GetEmbeddedProgram(string programPath)
     {
         try
         {
