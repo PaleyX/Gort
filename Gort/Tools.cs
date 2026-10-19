@@ -12,7 +12,7 @@ internal static class Tools
         WriteMessage(message, ConsoleColor.Red);
     }
 
-    internal static void WriteMessage(string message, ConsoleColor color = ConsoleColor.White)
+    private static void WriteMessage(string message, ConsoleColor color = ConsoleColor.White)
     {
         var previous = Console.ForegroundColor;
         Console.ForegroundColor = color;

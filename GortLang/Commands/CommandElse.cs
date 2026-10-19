@@ -22,10 +22,8 @@ internal class CommandElse : CommandBase
 
         Environment.Stack.Push(this);
     }
-    internal override CommandBase? Execute()
-    {
-        return Next;
-    }
+
+    internal override CommandBase? Execute() => Next;
 
     internal CommandIf? If { get; private set; }
 }

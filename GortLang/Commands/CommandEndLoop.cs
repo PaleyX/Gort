@@ -29,8 +29,5 @@ internal class CommandEndLoop : CommandBase
         }
     }
 
-    internal override CommandBase? Execute()
-    {
-        return _loop;
-    }
+    internal override CommandBase? Execute() => _loop;
 }

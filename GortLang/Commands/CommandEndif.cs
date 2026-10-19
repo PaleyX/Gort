@@ -25,10 +25,8 @@ internal class CommandEndif : CommandBase
 
         Environment.Stack.Pop();
     }
-    internal override CommandBase? Execute()
-    {
-        return Next;
-    }
+
+    internal override CommandBase? Execute() => Next;
 
     internal CommandIf If { get; private set; }
 }

@@ -24,7 +24,7 @@ public class Interpreter(string? source, Dictionary<string, object?> variables, 
         RunProgram(environment);
     }
 
-    private void RunProgram(Environment environment)
+    private static void RunProgram(Environment environment)
     {
         CommandBase? command = null;
 
