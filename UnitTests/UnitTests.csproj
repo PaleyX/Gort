@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GortLang\GortLang.csproj" />
     <ProjectReference Include="..\Gort\Gort.csproj" />
   </ItemGroup>
 

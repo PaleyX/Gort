@@ -1,14 +1,17 @@
 ﻿using PaleyExpressions.Runners;
-using System.Text.RegularExpressions;
 
-namespace Gort.Commands;
+namespace GortLang.Commands;
 
-[Command('$')]
-internal class CommandAssign(int lineNumber) : CommandBase(lineNumber)
+[Command('$')] 
+internal class CommandAssign : CommandBase
 {
     private string _variableName;
 
     private IRunner _runner;
+
+    internal CommandAssign(Environment environment, int lineNumber) : base(environment, lineNumber)
+    {
+    }
 
     internal override void Compile(string line)
     {
@@ -20,9 +23,9 @@ internal class CommandAssign(int lineNumber) : CommandBase(lineNumber)
 
         _variableName = line[..index].Trim();
 
-        if (Regex.IsMatch(_variableName, Environment.IdentifierPattern))
+        if (Tools.IsIdentifier(_variableName))
         {
-            _runner = Tools.GetRunner(line[(index + 1)..].Trim());
+            _runner = Tools.GetRunner(line[(index + 1)..].Trim(), Environment.Functions);
         }
         else
         {

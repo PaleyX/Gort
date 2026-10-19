@@ -1,18 +1,7 @@
-﻿using PaleyExpressions.Runners;
-
-namespace Gort;
+﻿namespace Gort;
 
 internal static class Tools
 {
-    internal static IRunner GetRunner(string line)
-    {
-#if USE_EXPRESSION
-        return new ExpressionRunner(line, typeof(Functions));
-#else
-        return new AstRunner(line, typeof(Functions));
-#endif
-    }
-
     internal static void WriteInfo(string message)
     {
         WriteMessage(message, ConsoleColor.Green);

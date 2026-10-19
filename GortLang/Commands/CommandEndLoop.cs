@@ -1,8 +1,12 @@
-﻿namespace Gort.Commands;
+﻿namespace GortLang.Commands;
 
 [Command(']')]
-internal class CommandEndLoop(int lineNumber) : CommandBase(lineNumber)
+internal class CommandEndLoop : CommandBase
 {
+    internal CommandEndLoop(Environment environment, int lineNumber) : base(environment, lineNumber)
+    {
+    }
+
     private CommandLoop _loop;
 
     internal override void Compile(string line)

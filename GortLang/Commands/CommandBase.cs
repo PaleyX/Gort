@@ -1,8 +1,12 @@
-﻿namespace Gort.Commands;
+﻿using System.Reflection;
 
-internal abstract class CommandBase(int lineNumber)
+namespace GortLang.Commands;
+
+internal abstract class CommandBase(Environment environment, int lineNumber)
 {
     internal int LineNumber { get; } = lineNumber;
+
+    protected readonly Environment Environment = environment;
 
     internal abstract void Compile(string line);
 
@@ -10,7 +14,7 @@ internal abstract class CommandBase(int lineNumber)
 
     internal CommandBase? Next { get; set; }
 
-    internal static CommandBase? GetCommand(char command, int lineNumber)
+    internal static CommandBase? GetCommand(char command, Environment environment, int lineNumber)
     {
         var type = typeof(CommandBase).Assembly
             .GetTypes()
@@ -22,7 +26,12 @@ internal abstract class CommandBase(int lineNumber)
             return null;
         }
 
-        return (CommandBase?)Activator.CreateInstance(type, lineNumber);
+        return (CommandBase?)Activator.CreateInstance(
+                type,
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                binder: null,
+                args: [environment, lineNumber],
+                culture: null);
     }
 
     internal static List<char> GetCommandList()

@@ -1,15 +1,19 @@
 ﻿using PaleyExpressions.Runners;
 
-namespace Gort.Commands;
+namespace GortLang.Commands;
 
 [Command('{')]
-internal class CommandIf(int lineNumber) : CommandBase(lineNumber)
+internal class CommandIf : CommandBase
 {
     private IRunner? _runner;
 
+    internal CommandIf(Environment environment, int lineNumber) : base(environment, lineNumber)
+    {
+    }
+
     internal override void Compile(string line)
     {
-        _runner = Tools.GetRunner(line);
+        _runner = Tools.GetRunner(line, Environment.Functions);
 
         Environment.Stack.Push(this);
     }

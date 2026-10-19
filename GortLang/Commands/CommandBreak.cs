@@ -1,11 +1,15 @@
 ﻿using PaleyExpressions.Runners;
 
-namespace Gort.Commands;
+namespace GortLang.Commands;
 
 [Command('!')]
-internal class CommandBreak(int lineNumber) : CommandBase(lineNumber)
+internal class CommandBreak : CommandBase
 {
     private IRunner? _runner;
+
+    internal CommandBreak(Environment environment, int lineNumber) : base(environment, lineNumber)
+    {
+    }
 
     internal override void Compile(string line)
     {
@@ -19,7 +23,7 @@ internal class CommandBreak(int lineNumber) : CommandBase(lineNumber)
 
         if (!string.IsNullOrWhiteSpace(line))
         {
-            _runner = Tools.GetRunner(line);
+            _runner = Tools.GetRunner(line, Environment.Functions);
         }
     }
 

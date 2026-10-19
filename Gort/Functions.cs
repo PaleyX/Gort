@@ -1,4 +1,5 @@
-﻿using PaleyExpressions;
+﻿using GortLang;
+using PaleyExpressions;
 
 namespace Gort;
 
@@ -51,7 +52,7 @@ internal static class Functions
     [Function("cond")]
     public static object? Cond(params Func<object?>[] args)
     {
-        for (int i = 0; i < args.Length; i += 2)
+        for (var i = 0; i < args.Length; i += 2)
         {
             if (args[i]() is true)
             {

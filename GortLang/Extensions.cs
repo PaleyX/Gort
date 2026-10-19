@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Gort;
+namespace GortLang;
 
 internal static partial class Extensions
 {
@@ -16,7 +16,7 @@ internal static partial class Extensions
             return "";
         });
 
-        return result; 
+        return result;
     }
 
     [GeneratedRegex(@"([""']).*?\1|(?<=\d)_(?=\d)")]
