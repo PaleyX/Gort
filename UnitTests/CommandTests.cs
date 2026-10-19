@@ -1,73 +1,109 @@
-﻿//using Gort.Commands;
+﻿using System.Text;
+using GortLang;
 
-//namespace UnitTests;
+namespace UnitTests;
 
-//public class CommandTests
-//{
-//    public CommandTests()
-//    {
-//        // Ensure fresh state before each test (xUnit creates a new instance per test)
-//        Gort.Environment.Reset();
-//        Gort.Environment.Variables.Clear();
-//    }
+public class CommandTests
+{
+    private Dictionary<string, object?> _variables = new();
 
-//    //TODO: these are all wrong - keep them for now as a guide to why they are wrong.
-//    //      replace in next version - major rewrite
+    [Fact]
+    public void CommandIf_FalseJumpsToEndif()
+    {
+        var source = """
+                     z 10
+                     { 1 == 2
+                       z 99
+                     }
+                     """;
 
-//    [Fact]
-//    public void CommandIf_TrueBranchesToNext()
-//    {
-//        // Arrange
-//        var ifCmd = (CommandIf)CommandBase.GetCommand('{', 1)!;
-//        ifCmd.Compile("1 == 1"); // condition that evaluates to true
+        var sb = new StringBuilder();
 
-//        var trueAssign = (CommandAssign)CommandBase.GetCommand('$', 2)!;
-//        trueAssign.Compile("y 10");
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        runner.Run();
 
-//        var endif = (CommandEndif)CommandBase.GetCommand('}', 3)!;
+        Assert.Equal(0, sb.Length);
+        Assert.Equal(10d, _variables["z"]);
+    }
 
-//        // Link flow: if -> trueAssign ; if.Jump -> endif ; endif.Next -> null
-//        ifCmd.Next = trueAssign;
-//        ifCmd.Jump = endif;
-//        endif.Next = null;
+    [Fact]
+    public void CommandIf_TrueJumpsToNext()
+    {
+        var source = """
+                     z 10
+                     { 1 == 1
+                       z 99
+                     }
+                     """;
 
-//        // Act: executing if should return the 'true' branch command
-//        var next = ifCmd.Execute();
+        var sb = new StringBuilder();
 
-//        // Assert: next is the expected command and executing it assigns variable
-//        Assert.Same(trueAssign, next);
-//        next!.Execute();
-//        Assert.Equal(10d, Gort.Environment.Variables["y"]!);
-//    }
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        runner.Run();
 
-//    [Fact]
-//    public void CommandIf_FalseJumpsToJumpNext()
-//    {
-//        // z 10
-//        // { 1 == 2
-//        //   z 99
-//        // }
+        Assert.Equal(0, sb.Length);
+        Assert.Equal(99d, _variables["z"]);
+    }
 
-//        // Arrange
-//        var assign10 = (CommandAssign)CommandBase.GetCommand('$', 2)!;
-//        assign10.Compile("z 10");
-        
-//        var ifCmd = (CommandIf)CommandBase.GetCommand('{', 1)!;
-//        ifCmd.Compile("1 == 2"); // condition false
+    [Fact]
+    public void CommandIf_WithElseJumpsToElse()
+    {
+        var source = """
+                     z 10
+                     { 1 == 2
+                       z 99
+                     }
+                     {
+                       z 55
+                     }
+                     """;
 
-//        var assign99 = (CommandAssign)CommandBase.GetCommand('$', 2)!;
-//        assign99.Compile("z 99");
+        var sb = new StringBuilder();
 
-//        var endif = (CommandEndif)CommandBase.GetCommand('}', 3)!;
-//        endif.Compile("");
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        runner.Run();
 
-//        // Act
-//        var next = assign10.Execute();
+        Assert.Equal(0, sb.Length);
+        Assert.Equal(55d, _variables["z"]);
+    }
 
-//        // Assert: because condition is false we should jump to endif.Next (the elseAssign)
-//        Assert.Null(next);
+    [Fact]
+    public void CommandBreaK_WithNoClauseExitsLoop()
+    {
+        var source = """
+                     n 0
+                     [
+                       !
+                       n n+1
+                     ]
+                     """;
 
-//        // and z hasn't been set to 99
-//        Assert.Equal(10d, Gort.Environment.Variables["z"]);
-//    }
-//}
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        runner.Run();
+
+        Assert.Equal(0, sb.Length);
+        Assert.Equal(0d, _variables["n"]);
+    }
+
+    [Fact]
+    public void CommandBreaK_WithClauseExitsLoop()
+    {
+        var source = """
+                     n 0
+                     [
+                       ! n == 6
+                       n n+1
+                     ]
+                     """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        runner.Run();
+
+        Assert.Equal(0, sb.Length);
+        Assert.Equal(6d, _variables["n"]);
+    }
+}

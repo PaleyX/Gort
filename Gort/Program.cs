@@ -112,17 +112,4 @@ public class Program
             return string.Empty;
         }
     }
-
-    private static bool IsIdentifier(string line)
-    {
-        var index = line.IndexOf(' ');
-        if (index == -1)
-        {
-            return false;
-        }
-
-        var id = line[..index].Trim();
-
-        return GortLang.Tools.IsIdentifier(id);
-    }
 }
