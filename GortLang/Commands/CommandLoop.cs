@@ -1,18 +1,22 @@
 ﻿using PaleyExpressions.Runners;
 
-namespace Gort.Commands;
+namespace GortLang.Commands;
 
 [Command('[')]
-internal class CommandLoop(int lineNumber) : CommandBase(lineNumber)
+internal class CommandLoop : CommandBase
 {
     private IRunner? _runner;
     private List<CommandBreak>? _breaks;
+
+    internal CommandLoop(Environment environment, int lineNumber) : base(environment, lineNumber)
+    {
+    }
 
     internal override void Compile(string line)
     {
         if (!string.IsNullOrWhiteSpace(line))
         {
-            _runner = Tools.GetRunner(line);
+            _runner = Tools.GetRunner(line, Environment.Functions);
         }
 
         Environment.Stack.Push(this);

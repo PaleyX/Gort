@@ -1,8 +1,12 @@
-﻿namespace Gort.Commands;
+﻿namespace GortLang.Commands;
 
 [Command('}')]
-internal class CommandEndif(int lineNumber) : CommandBase(lineNumber)
+internal class CommandEndif : CommandBase
 {
+    internal CommandEndif(Environment environment, int lineNumber) : base(environment, lineNumber)
+    {
+    }
+
     internal override void Compile(string line)
     {
         switch (Environment.Stack.Peek())

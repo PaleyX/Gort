@@ -1,7 +1,11 @@
-﻿namespace Gort.Commands;
+﻿namespace GortLang.Commands;
 
-internal class CommandElse(int lineNumber) : CommandBase(lineNumber)
+internal class CommandElse : CommandBase
 {
+    internal CommandElse(Environment environment, int lineNumber) : base(environment, lineNumber)
+    {
+    }
+
     internal override void Compile(string line)
     {
         if (!string.IsNullOrWhiteSpace(line))
