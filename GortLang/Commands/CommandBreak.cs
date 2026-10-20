@@ -3,7 +3,7 @@
 namespace GortLang.Commands;
 
 [Command('!')]
-internal class CommandBreak : CommandBase
+internal sealed class CommandBreak : CommandBase
 {
     private IRunner? _runner;
 

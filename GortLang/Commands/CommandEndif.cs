@@ -1,7 +1,7 @@
 ﻿namespace GortLang.Commands;
 
 [Command('}')]
-internal class CommandEndif : CommandBase
+internal sealed class CommandEndif : CommandBase
 {
     internal CommandEndif(Environment environment, int lineNumber) : base(environment, lineNumber)
     {

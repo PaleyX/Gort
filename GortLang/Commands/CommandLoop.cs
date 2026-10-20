@@ -3,7 +3,7 @@
 namespace GortLang.Commands;
 
 [Command('[')]
-internal class CommandLoop : CommandBase
+internal sealed class CommandLoop : CommandBase
 {
     private IRunner? _runner;
     private List<CommandBreak>? _breaks;

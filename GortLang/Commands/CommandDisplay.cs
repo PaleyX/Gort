@@ -3,7 +3,7 @@
 namespace GortLang.Commands;
 
 [Command(':')]
-internal class CommandDisplay : CommandBase
+internal sealed class CommandDisplay : CommandBase
 {
     private IRunner _runner;
 

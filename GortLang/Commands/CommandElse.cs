@@ -1,6 +1,6 @@
 ﻿namespace GortLang.Commands;
 
-internal class CommandElse : CommandBase
+internal sealed class CommandElse : CommandBase
 {
     internal CommandElse(Environment environment, int lineNumber) : base(environment, lineNumber)
     {

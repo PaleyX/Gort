@@ -1,7 +1,7 @@
 ﻿namespace GortLang.Commands;
 
 [Command(']')]
-internal class CommandEndLoop : CommandBase
+internal sealed class CommandEndLoop : CommandBase
 {
     internal CommandEndLoop(Environment environment, int lineNumber) : base(environment, lineNumber)
     {
