@@ -10,7 +10,7 @@ public class Program
 
     private static void Main(string[] args)
     {
-        for (; ; )
+        while(true)
         {
             Console.Write("> ");
             var command = Console.ReadLine()?.Trim();

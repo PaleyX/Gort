@@ -1,6 +1,4 @@
 ﻿using GortLang;
-using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace UnitTests;
@@ -36,4 +34,29 @@ public class MiscTests
 
         Assert.Equal(expected, _variables["c"]);
     }
+
+    [Theory]
+    [InlineData("a")]
+    [InlineData("_a")]
+    [InlineData("_")]
+    [InlineData("z1234")]
+    [InlineData("X0_9")]
+    [InlineData("__")]
+    public void ValidIdentifiers_Pass(string text)
+    {
+        Assert.True(Tools.IsIdentifier(text));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("9")]
+    [InlineData("-")]
+    [InlineData("9z1234")]
+    [InlineData("#0_9")]
+    [InlineData("+k")]
+    public void InvalidIdentifiers_DoNotPass(string text)
+    {
+        Assert.False(Tools.IsIdentifier(text));
+    }
+
 }

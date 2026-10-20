@@ -5,7 +5,7 @@ namespace UnitTests;
 
 public class CommandTests
 {
-    private Dictionary<string, object?> _variables = new();
+    private readonly Dictionary<string, object?> _variables = new();
 
     [Fact]
     public void CommandIf_FalseJumpsToEndif()
@@ -127,5 +127,52 @@ public class CommandTests
 
         Assert.Equal(0, sb.Length);
         Assert.Equal(6d, _variables["n"]);
+    }
+
+    [Fact]
+    public void CommandDisplay_Works()
+    {
+        const string source = """
+                              n 10
+                              : n
+                              : n*n
+                              """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        runner.Run();
+
+        // this isn't great, but it works for now.
+        // The display command writes to the output stream,
+        // but doesn't add a newline if output is set to a StringBuilder
+        Assert.Equal(5, sb.Length);
+        Assert.Equal("10100", sb.ToString());
+    }
+
+    [Fact]
+    public void CommandAssign_Works()
+    {
+        const string source = """
+                              a 10
+                              b 20.89
+                              c a+b
+                              d c*1_000_000
+                              tf true
+                              s "Hello"
+                              """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        runner.Run();
+
+        Assert.Equal(0, sb.Length);
+        Assert.Equal(10d, _variables["a"]);
+        Assert.Equal(20.89d, _variables["b"]);
+        Assert.Equal(30.89d, _variables["c"]);
+        Assert.Equal(30890000d, _variables["d"]);
+        Assert.Equal(true, _variables["tf"]);
+        Assert.Equal("Hello", _variables["s"]);
     }
 }
