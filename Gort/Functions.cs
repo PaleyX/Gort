@@ -41,10 +41,7 @@ internal static class Functions
     }
 
     [Function("len")]
-    public static double Len(string text)
-    {
-        return text.Length;
-    }
+    public static double Len(string text) => text.Length;
 
     [Function("sqrt")]
     public static double Sqrt(double n) => Math.Sqrt(n);

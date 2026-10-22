@@ -2,6 +2,7 @@
 
 using PaleyExpressions.Runners;
 using System.Text.RegularExpressions;
+using GortLang.Commands;
 
 namespace GortLang;
 
@@ -26,5 +27,13 @@ public static class Tools
     public static bool IsIdentifier(string text)
     {
         return Regex.IsMatch(text, IdentifierPattern);
+    }
+
+    internal static char GetSigil(Type type)
+    {
+        // get CommandAttribute from type
+        var attribute = (CommandAttribute?)Attribute.GetCustomAttribute(type, typeof(CommandAttribute));
+
+        return attribute?.Sigil ?? 'X';
     }
 }

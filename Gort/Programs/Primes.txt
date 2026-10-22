@@ -10,7 +10,7 @@ n 1
         { n % 2 != 0
             limit sqrt(n)
             i 3
-            r true
+            r true 
             [ i <= limit
                 { n % i == 0
                     r false

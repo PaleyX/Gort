@@ -1,73 +1,254 @@
-﻿//using Gort.Commands;
+﻿using System.Text;
+using GortLang;
 
-//namespace UnitTests;
+namespace UnitTests;
 
-//public class CommandTests
-//{
-//    public CommandTests()
-//    {
-//        // Ensure fresh state before each test (xUnit creates a new instance per test)
-//        Gort.Environment.Reset();
-//        Gort.Environment.Variables.Clear();
-//    }
+public class CommandTests
+{
+    private readonly Dictionary<string, object?> _variables = new();
 
-//    //TODO: these are all wrong - keep them for now as a guide to why they are wrong.
-//    //      replace in next version - major rewrite
+    [Fact]
+    public void CommandIf_FalseJumpsToEndif()
+    {
+        const string source = """
+                              z 10
+                              { 1 == 2
+                                z 99
+                              }
+                              """;
 
-//    [Fact]
-//    public void CommandIf_TrueBranchesToNext()
-//    {
-//        // Arrange
-//        var ifCmd = (CommandIf)CommandBase.GetCommand('{', 1)!;
-//        ifCmd.Compile("1 == 1"); // condition that evaluates to true
+        var sb = new StringBuilder();
 
-//        var trueAssign = (CommandAssign)CommandBase.GetCommand('$', 2)!;
-//        trueAssign.Compile("y 10");
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        runner.Run();
 
-//        var endif = (CommandEndif)CommandBase.GetCommand('}', 3)!;
+        Assert.Equal(0, sb.Length);
+        Assert.Equal(10d, _variables["z"]);
+    }
 
-//        // Link flow: if -> trueAssign ; if.Jump -> endif ; endif.Next -> null
-//        ifCmd.Next = trueAssign;
-//        ifCmd.Jump = endif;
-//        endif.Next = null;
+    [Fact]
+    public void CommandIf_TrueJumpsToNext()
+    {
+        const string source = """
+                              z 10
+                              { 1 == 1
+                                z 99
+                              }
+                              """;
 
-//        // Act: executing if should return the 'true' branch command
-//        var next = ifCmd.Execute();
+        var sb = new StringBuilder();
 
-//        // Assert: next is the expected command and executing it assigns variable
-//        Assert.Same(trueAssign, next);
-//        next!.Execute();
-//        Assert.Equal(10d, Gort.Environment.Variables["y"]!);
-//    }
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        runner.Run();
 
-//    [Fact]
-//    public void CommandIf_FalseJumpsToJumpNext()
-//    {
-//        // z 10
-//        // { 1 == 2
-//        //   z 99
-//        // }
+        Assert.Equal(0, sb.Length);
+        Assert.Equal(99d, _variables["z"]);
+    }
 
-//        // Arrange
-//        var assign10 = (CommandAssign)CommandBase.GetCommand('$', 2)!;
-//        assign10.Compile("z 10");
-        
-//        var ifCmd = (CommandIf)CommandBase.GetCommand('{', 1)!;
-//        ifCmd.Compile("1 == 2"); // condition false
+    [Fact]
+    public void CommandIf_WithElseJumpsToElse()
+    {
+        const string source = """
+                              z 10
+                              { 1 == 2
+                                z 99
+                              }
+                              {
+                                z 55
+                              }
+                              """;
 
-//        var assign99 = (CommandAssign)CommandBase.GetCommand('$', 2)!;
-//        assign99.Compile("z 99");
+        var sb = new StringBuilder();
 
-//        var endif = (CommandEndif)CommandBase.GetCommand('}', 3)!;
-//        endif.Compile("");
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        runner.Run();
 
-//        // Act
-//        var next = assign10.Execute();
+        Assert.Equal(0, sb.Length);
+        Assert.Equal(55d, _variables["z"]);
+    }
 
-//        // Assert: because condition is false we should jump to endif.Next (the elseAssign)
-//        Assert.Null(next);
+    [Fact]
+    public void CommandBreak_WithNoClauseExitsLoop()
+    {
+        const string source = """
+                              n 0
+                              [
+                                !
+                                n n+1
+                              ]
+                              """;
 
-//        // and z hasn't been set to 99
-//        Assert.Equal(10d, Gort.Environment.Variables["z"]);
-//    }
-//}
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        runner.Run();
+
+        Assert.Equal(0, sb.Length);
+        Assert.Equal(0d, _variables["n"]);
+    }
+
+    [Fact]
+    public void CommandBreak_WithClauseExitsLoop()
+    {
+        const string source = """
+                              n 0
+                              [
+                                ! n == 6
+                                n n+1
+                              ]
+                              """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        runner.Run();
+
+        Assert.Equal(0, sb.Length);
+        Assert.Equal(6d, _variables["n"]);
+    }
+
+    [Fact]
+    public void CommandBreak_WithNoClauseExitsLoopWhenInsideIf()
+    {
+        const string source = """
+                              n 0
+                              [
+                                { n == 6
+                                  !
+                                }
+                                n n+1
+                              ]
+                              """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        runner.Run();
+
+        Assert.Equal(0, sb.Length);
+        Assert.Equal(6d, _variables["n"]);
+    }
+
+    [Fact]
+    public void CommandDisplay_Works()
+    {
+        const string source = """
+                              n 10
+                              : n
+                              : n*n
+                              """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        runner.Run();
+
+        var nl = System.Environment.NewLine;
+
+        Assert.Equal(9, sb.Length);
+        Assert.Equal($"10{nl}100{nl}", sb.ToString());
+    }
+
+    [Fact]
+    public void CommandAssign_Works()
+    {
+        const string source = """
+                              a 10
+                              b 20.89
+                              c a+b
+                              d c*1_000_000
+                              tf true
+                              s "Hello"
+                              """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        runner.Run();
+
+        Assert.Equal(0, sb.Length);
+        Assert.Equal(10d, _variables["a"]);
+        Assert.Equal(20.89d, _variables["b"]);
+        Assert.Equal(30.89d, _variables["c"]);
+        Assert.Equal(30890000d, _variables["d"]);
+        Assert.Equal(true, _variables["tf"]);
+        Assert.Equal("Hello", _variables["s"]);
+    }
+
+    [Fact]
+    public void MisplacedEndloop_ThrowsCorrectly()
+    {
+        const string source = """
+                              [ true
+                                { true
+                                  ]
+                                }
+                              ] 
+                              """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+
+        var ex = Assert.Throws<CompileTimeException>(runner.Run);
+        Assert.Equal("Compilation failed with 1 errors.", ex.Message);
+        Assert.Equal("Error compiling program: Loop..Endloop mismatch - line 3" + System.Environment.NewLine, sb.ToString());
+    }
+
+    [Fact]
+    public void MisplacedLoop_ThrowsCorrectly()
+    {
+        const string source = """
+                              [ true
+                                { true
+                                  [
+                                }
+                              ] 
+                              """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+
+        var ex = Assert.Throws<CompileTimeException>(runner.Run);
+        Assert.Equal("Compilation failed with 1 errors.", ex.Message);
+        Assert.Equal("Error compiling program: If..Endif mismatch - line 4" + System.Environment.NewLine, sb.ToString());
+    }
+
+    [Fact]
+    public void NoEndif_ThrowsCorrectly()
+    {
+        const string source = """
+                              { true
+                              """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+
+        var ex = Assert.Throws<CompileTimeException>(runner.Run);
+        Assert.Equal("Compilation failed with 1 errors.", ex.Message);
+        Assert.Equal("Error: Unmatched '{' - line 1" + System.Environment.NewLine, sb.ToString());
+    }
+
+    [Fact]
+    public void ElseWithNoIf_ThrowsCorrectly()
+    {
+        const string source = """
+                              [
+                              ]
+                              {
+                              }
+                              """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+
+        var ex = Assert.Throws<CompileTimeException>(runner.Run);
+        Assert.Equal("Compilation failed with 1 errors.", ex.Message);
+        Assert.Equal("Error compiling program: An else: '{' must immediately follow an endif: '}' - line 3" + System.Environment.NewLine, sb.ToString());
+    }
+}
+
+// TODO: standardise error message format

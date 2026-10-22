@@ -3,7 +3,7 @@
 namespace GortLang.Commands;
 
 [Command('{')]
-internal class CommandIf : CommandBase
+internal sealed class CommandIf : CommandBase
 {
     private IRunner? _runner;
 

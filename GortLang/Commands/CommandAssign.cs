@@ -3,7 +3,7 @@
 namespace GortLang.Commands;
 
 [Command('$')] 
-internal class CommandAssign : CommandBase
+internal sealed class CommandAssign : CommandBase
 {
     private string _variableName;
 

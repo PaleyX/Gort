@@ -25,4 +25,18 @@ public class ExtensionsTests
 
         Assert.Equal(original, original.StripNumericUnderscores());
     }
+
+    [Theory]
+    [InlineData("^ start of line", "")]
+    [InlineData("middle of^ line", "middle of")]
+    [InlineData("end of line ^", "end of line ")]
+    [InlineData("multiple ^ comments ^ in ^ line", "multiple ")]
+    [InlineData("no comments here", "no comments here")]
+    [InlineData("a comment \"in a ^ string\"", "a comment \"in a ^ string\"")]
+    public void RemoveCommentsWorks(string text, string expected)
+    {
+        var result = text.RemoveComments();
+
+        Assert.Equal(expected, result);
+    }
 }
