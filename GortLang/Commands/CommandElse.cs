@@ -10,12 +10,12 @@ internal sealed class CommandElse : CommandBase
     {
         if (!string.IsNullOrWhiteSpace(line))
         {
-            throw new CompileTimeException($"Superfluous text on else. Line {LineNumber}");
+            throw new CompileTimeException("Superfluous text on else '{'");
         }
 
         if(Environment.Last is not CommandEndif endif)
         {
-            throw new CompileTimeException($"Else mismatch. Line {LineNumber}");
+            throw new CompileTimeException("An else: '{' must immediately follow an endif: '}'");
         }
 
         If = endif.If;

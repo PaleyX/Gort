@@ -1,5 +1,6 @@
 ﻿using GortLang;
 using System.Text;
+using GortLang.Commands;
 
 namespace UnitTests;
 
@@ -59,4 +60,24 @@ public class MiscTests
         Assert.False(Tools.IsIdentifier(text));
     }
 
+    [Theory]
+    [InlineData(typeof(CommandIf), '{')]
+    [InlineData(typeof(CommandLoop), '[')]
+    [InlineData(typeof(CommandEndif), '}')]
+    [InlineData(typeof(CommandEndLoop), ']')]
+    [InlineData(typeof(CommandBreak), '!')]
+    [InlineData(typeof(CommandDisplay), ':')]
+    [InlineData(typeof(CommandAssign), '$')]
+    public void GetSigil_ReturnsCorrectSigil(Type commandType, char expectedSigil)
+    {
+        var actualSigil = Tools.GetSigil(commandType);
+        Assert.Equal(expectedSigil, actualSigil);
+    }
+
+    [Fact]
+    public void GetSigil_ReturnsXIfNoSigil()
+    {
+        var actualSigil = Tools.GetSigil(typeof(CommandElse));
+        Assert.Equal('X', actualSigil);
+    }
 }

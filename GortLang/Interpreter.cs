@@ -2,7 +2,7 @@
 
 namespace GortLang;
 
-public class Interpreter(string? source, Dictionary<string, object?> variables, Type? functions, Action<string>? output = null)
+public class Interpreter(string? source, Dictionary<string, object?>? variables, Type? functions, Action<string>? output = null)
 {
     private readonly string _source = source ?? throw new ArgumentNullException(nameof(source));
     private readonly Action<string> _output = output ?? Console.WriteLine;
@@ -74,7 +74,7 @@ public class Interpreter(string? source, Dictionary<string, object?> variables, 
                 var command = CommandBase.GetCommand(line[0], environment, lineNumber);
                 if (command == null)
                 {
-                    Error($"Error: Unknown command '{line[0]}' at line {lineNumber}");
+                    Error($"Error: Unknown command '{line[0]}' - line {lineNumber}");
                     continue;
                 }
 
@@ -100,7 +100,7 @@ public class Interpreter(string? source, Dictionary<string, object?> variables, 
 
             if (environment.Stack.Count > 0)
             {
-                Error($"Error: Unmatched '{environment.Stack.Peek()!.GetType().Name}' at line {lineNumber}");
+                Error($"Error: Unmatched '{Tools.GetSigil(environment.Stack.Peek()!.GetType())}' - line {lineNumber}");
             }
         }
         catch (Exception ex)
@@ -112,6 +112,12 @@ public class Interpreter(string? source, Dictionary<string, object?> variables, 
     private void Error(string text)
     {
         _output(text);
+
+        if (_output != (Action<string>)Console.WriteLine)
+        {
+            _output(System.Environment.NewLine);
+        }
+
         ++_errors;
     }
 

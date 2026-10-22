@@ -143,11 +143,10 @@ public class CommandTests
         var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
         runner.Run();
 
-        // this isn't great, but it works for now.
-        // The display command writes to the output stream,
-        // but doesn't add a newline if output is set to a StringBuilder
-        Assert.Equal(5, sb.Length);
-        Assert.Equal("10100", sb.ToString());
+        var nl = System.Environment.NewLine;
+
+        Assert.Equal(9, sb.Length);
+        Assert.Equal($"10{nl}100{nl}", sb.ToString());
     }
 
     [Fact]
@@ -175,4 +174,81 @@ public class CommandTests
         Assert.Equal(true, _variables["tf"]);
         Assert.Equal("Hello", _variables["s"]);
     }
+
+    [Fact]
+    public void MisplacedEndloop_ThrowsCorrectly()
+    {
+        const string source = """
+                              [ true
+                                { true
+                                  ]
+                                }
+                              ] 
+                              """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+
+        var ex = Assert.Throws<CompileTimeException>(runner.Run);
+        Assert.Equal("Compilation failed with 1 errors.", ex.Message);
+        Assert.Equal("Error compiling program: Loop..Endloop mismatch - line 3" + System.Environment.NewLine, sb.ToString());
+    }
+
+    [Fact]
+    public void MisplacedLoop_ThrowsCorrectly()
+    {
+        const string source = """
+                              [ true
+                                { true
+                                  [
+                                }
+                              ] 
+                              """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+
+        var ex = Assert.Throws<CompileTimeException>(runner.Run);
+        Assert.Equal("Compilation failed with 1 errors.", ex.Message);
+        Assert.Equal("Error compiling program: If..Endif mismatch - line 4" + System.Environment.NewLine, sb.ToString());
+    }
+
+    [Fact]
+    public void NoEndif_ThrowsCorrectly()
+    {
+        const string source = """
+                              { true
+                              """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+
+        var ex = Assert.Throws<CompileTimeException>(runner.Run);
+        Assert.Equal("Compilation failed with 1 errors.", ex.Message);
+        Assert.Equal("Error: Unmatched '{' - line 1" + System.Environment.NewLine, sb.ToString());
+    }
+
+    [Fact]
+    public void ElseWithNoIf_ThrowsCorrectly()
+    {
+        const string source = """
+                              [
+                              ]
+                              {
+                              }
+                              """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+
+        var ex = Assert.Throws<CompileTimeException>(runner.Run);
+        Assert.Equal("Compilation failed with 1 errors.", ex.Message);
+        Assert.Equal("Error compiling program: An else: '{' must immediately follow an endif: '}' - line 3" + System.Environment.NewLine, sb.ToString());
+    }
 }
+
+// TODO: standardise error message format

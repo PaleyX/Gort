@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Reflection;
 using GortLang;
 
 namespace Gort;
@@ -30,12 +29,12 @@ public class Program
                     case '&':
                         if (command.StartsWith("&&"))
                         {
-                            var text = GetEmbeddedProgram(command[2..]);
+                            var text = Tools.GetEmbeddedProgram(command[2..]);
                             RunTimedProgram(text);
                         }
                         else
                         {
-                            var text = GetEmbeddedProgram(command[1..]);
+                            var text = Tools.GetEmbeddedProgram(command[1..]);
                             RunProgram(text);
                         }
                         break;
@@ -92,24 +91,5 @@ public class Program
     {
         var runner = new Interpreter(programText, _variables, typeof(Functions), Console.WriteLine);
         runner.Run();
-    }
-
-
-    private static string GetEmbeddedProgram(string programPath)
-    {
-        try
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = $"Gort.Programs.{programPath.Trim()}.txt";
-
-            using var stream = assembly.GetManifestResourceStream(resourceName);
-            using var reader = new StreamReader(stream);
-            return reader.ReadToEnd();
-        }
-        catch (Exception ex)
-        {
-            Tools.WriteError($"Error loading program: {ex.Message}");
-            return string.Empty;
-        }
     }
 }
