@@ -58,9 +58,9 @@ public class Interpreter(string? source, Dictionary<string, object?>? variables,
             {
                 ++lineNumber;
 
-                var line = rawLine.Trim().StripNumericUnderscores();
+                var line = rawLine.Trim().StripNumericUnderscores().RemoveComments();
 
-                if (string.IsNullOrWhiteSpace(line) || line[0] == '^')
+                if (string.IsNullOrWhiteSpace(line))
                 {
                     continue;
                 }
@@ -111,12 +111,7 @@ public class Interpreter(string? source, Dictionary<string, object?>? variables,
 
     private void Error(string text)
     {
-        _output(text);
-
-        if (_output != (Action<string>)Console.WriteLine)
-        {
-            _output(System.Environment.NewLine);
-        }
+        _output.FormatOutput(text);
 
         ++_errors;
     }

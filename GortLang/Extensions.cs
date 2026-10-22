@@ -4,21 +4,42 @@ namespace GortLang;
 
 internal static partial class Extensions
 {
-    internal static string StripNumericUnderscores(this string text)
+    extension(string text)
     {
-        var result = MyRegex().Replace(text, m =>
+        internal string StripNumericUnderscores()
         {
-            // If it's a quoted string, return as-is
-            if (m.Value.StartsWith("\"") || m.Value.StartsWith("'"))
-                return m.Value;
+            var result = NumericUnderscoresRegex().Replace(text, m =>
+            {
+                // If it's a quoted string, return as-is
+                if (m.Value.StartsWith("\"") || m.Value.StartsWith("'"))
+                    return m.Value;
 
-            // Otherwise, it's an underscore between digits → remove it
-            return "";
-        });
+                // Otherwise, it's an underscore between digits → remove it
+                return "";
+            });
 
-        return result;
+            return result;
+        }
+
+        internal string RemoveComments()
+        {
+            return CommentRegex().Replace(text, "$1");
+        }
+    }
+
+    internal static void FormatOutput(this Action<string> output, string text)
+    {
+        output(text);
+
+        if (output != (Action<string>)Console.WriteLine)
+        {
+            output(System.Environment.NewLine);
+        }
     }
 
     [GeneratedRegex(@"([""']).*?\1|(?<=\d)_(?=\d)")]
-    private static partial Regex MyRegex();
+    private static partial Regex NumericUnderscoresRegex();
+
+    [GeneratedRegex("""^((?:"(?:\\.|[^"\\\r\n])*"|[^"^\r\n])*)\^.*$""")]
+    private static partial Regex CommentRegex();
 }
