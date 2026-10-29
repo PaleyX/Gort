@@ -9,7 +9,9 @@ internal sealed class CommandEndif : CommandBase
 
     internal override void Compile(string line)
     {
-        switch (Environment.Stack.Peek())
+        var command = Environment.Stack.Pop();
+
+        switch (command)
         {
             case CommandIf i:
                 If = i;
@@ -22,8 +24,6 @@ internal sealed class CommandEndif : CommandBase
             default:
                 throw new CompileTimeException("If..Endif mismatch");
         }
-
-        Environment.Stack.Pop();
     }
 
     internal override CommandBase? Execute() => Next;

@@ -1,4 +1,4 @@
-^ just counts to 1 billion (takes a while)
+# just counts to 1 billion (takes a while)
 
 n 0
 [ n != 1000_000_000

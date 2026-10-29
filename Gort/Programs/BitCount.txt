@@ -1,4 +1,4 @@
-^ set n to the value you want counted
+# set n to the value you want counted
 
 c 0
 

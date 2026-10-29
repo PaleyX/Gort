@@ -27,12 +27,12 @@ public class ExtensionsTests
     }
 
     [Theory]
-    [InlineData("^ start of line", "")]
-    [InlineData("middle of^ line", "middle of")]
-    [InlineData("end of line ^", "end of line ")]
-    [InlineData("multiple ^ comments ^ in ^ line", "multiple ")]
+    [InlineData("# start of line", "")]
+    [InlineData("middle of# line", "middle of")]
+    [InlineData("end of line #", "end of line ")]
+    [InlineData("multiple # comments # in # line", "multiple ")]
     [InlineData("no comments here", "no comments here")]
-    [InlineData("a comment \"in a ^ string\"", "a comment \"in a ^ string\"")]
+    [InlineData("a comment \"in a # string\"", "a comment \"in a # string\"")]
     public void RemoveCommentsWorks(string text, string expected)
     {
         var result = text.RemoveComments();

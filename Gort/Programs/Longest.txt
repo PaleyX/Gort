@@ -1,7 +1,7 @@
-^ finds the longest substring in a string
-^ without repeating characters
+# finds the longest substring in a string
+# without repeating characters
 
-^s "abcabcbb"
+#s "abcabcbb"
 s "Jonathan"
 
 start 0
@@ -13,7 +13,7 @@ end 0
 [ end < len(s)
 	current substr(s, end, 1)
 
-	^ does current exist in the current window?
+	# does current exist in the current window?
 	k start
 	[ k < end
 		{ substr(s, k, 1) == current
@@ -24,7 +24,7 @@ end 0
 		k k + 1
 	]
 
-	^ calculate the length of the current window
+	# calculate the length of the current window
 	currentLength end - start + 1
 
 	{ currentLength > maxLength

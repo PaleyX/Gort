@@ -19,13 +19,13 @@ Commands
 | ! \<expression> | break out of a loop if the expression is true | ! a > 5 |
 | : \<expression>| display the result of the expression | : a + 5 |
 | \<identifier> \<expression>|Assign the result of the expression to the identifier | a 5 + 3 |
-|^|Comment|^ This is a comment|
+|#|Comment|# This is a comment|
 
 Examples
 --------
 Count the number of set bits in a number:
 ```csharp
-^ set n to the value you want counted
+# set n to the value you want counted
 
 c 0
 [ n > 0 

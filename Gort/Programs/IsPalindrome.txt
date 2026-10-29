@@ -1,4 +1,4 @@
-^ set s to be the string to test
+# set s to be the string to test
 
 o s
 r ""

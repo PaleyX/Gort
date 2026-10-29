@@ -1,5 +1,5 @@
 n 2147483644
-^Output should be: 1073741822
+# Output should be: 1073741822
 
 r 0
 

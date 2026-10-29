@@ -40,6 +40,6 @@ internal static partial class Extensions
     [GeneratedRegex(@"([""']).*?\1|(?<=\d)_(?=\d)")]
     private static partial Regex NumericUnderscoresRegex();
 
-    [GeneratedRegex("""^((?:"(?:\\.|[^"\\\r\n])*"|[^"^\r\n])*)\^.*$""")]
+    [GeneratedRegex("""^((?:"(?:\\.|[^"\\\r\n])*"|[^"#\r\n])*)#.*$""")]
     private static partial Regex CommentRegex();
 }
