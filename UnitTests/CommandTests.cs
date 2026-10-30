@@ -198,9 +198,7 @@ public class CommandTests
     [Fact]
     public void EmptyStackOnEndloop_ThrowsCorrectly()
     {
-        const string source = """
-                              ] 
-                              """;
+        const string source = "]";
 
         var sb = new StringBuilder();
 
@@ -234,9 +232,7 @@ public class CommandTests
     [Fact]
     public void EmptyStackOnEndif_ThrowsCorrectly()
     {
-        const string source = """
-                              }
-                              """;
+        const string source = "}";
 
         var sb = new StringBuilder();
 
@@ -250,9 +246,7 @@ public class CommandTests
     [Fact]
     public void NoEndif_ThrowsCorrectly()
     {
-        const string source = """
-                              { true
-                              """;
+        const string source = "{ true";
 
         var sb = new StringBuilder();
 

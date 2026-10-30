@@ -1,1 +1,6 @@
-}
+
+
+# function proposal
+@ func i
+	@= i*2
+@
