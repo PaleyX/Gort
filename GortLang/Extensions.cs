@@ -37,7 +37,7 @@ internal static partial class Extensions
         }
     }
 
-    [GeneratedRegex(@"([""']).*?\1|(?<=\d)_(?=\d)")]
+    [GeneratedRegex(@"([""'])(?:\\.|(?!\1).)*\1|(?<=\d)_(?=\d)")]
     private static partial Regex NumericUnderscoresRegex();
 
     [GeneratedRegex("""^((?:"(?:\\.|[^"\\\r\n])*"|[^"#\r\n])*)#.*$""")]

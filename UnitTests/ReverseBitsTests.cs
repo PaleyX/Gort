@@ -1,5 +1,4 @@
 ﻿using GortLang;
-using System.Text;
 
 namespace UnitTests;
 
@@ -25,7 +24,6 @@ public class ReverseBitsTests
     {
         var source = """
                      r 0
-
                      i 0
                      [ i < 32
                          r r << 1
@@ -36,15 +34,13 @@ public class ReverseBitsTests
                      ]
                      """;
 
-        var sb = new StringBuilder();
-
         var variables = new Dictionary<string, object?>
         {
             { "n", value }
         };
 
-        // run the program, outputting to the StringBuilder
-        var runner = new Interpreter(source, variables, typeof(Gort.Functions), t => sb.Append(t));
+        // run the program
+        var runner = new Interpreter(source, variables, null);
         runner.Run();
 
         // C# Reverse bits 

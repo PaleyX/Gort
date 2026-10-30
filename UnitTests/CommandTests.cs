@@ -108,6 +108,102 @@ public class CommandTests
     }
 
     [Fact]
+    public void CommandBreak_WithFalseClauseContinuesLoop()
+    {
+        const string source = """
+                              n 0
+                              [ n < 3
+                                ! n < 0
+                                n n+1
+                              ]
+                              """;
+
+        var runner = new Interpreter(source, _variables, null);
+        runner.Run();
+
+        Assert.Equal(3d, _variables["n"]);
+    }
+
+    [Fact]
+    public void CommandBreak_ExitsOnlyInnermostLoop()
+    {
+        const string source = """
+                              outer 0
+                              [ outer < 3
+                                inner 0
+                                [ inner < 3
+                                  inner inner+1
+                                  ! inner == 2
+                                ]
+                                outer outer+1
+                              ]
+                              """;
+
+        var runner = new Interpreter(source, _variables, null);
+        runner.Run();
+
+        Assert.Equal(3d, _variables["outer"]);
+        Assert.Equal(2d, _variables["inner"]);
+    }
+
+    [Fact]
+    public void GuardlessLoop_IsValidAndCanBeExitedWithBreak()
+    {
+        const string source = """
+                              n 0
+                              [
+                                n n+1
+                                !
+                              ]
+                              """;
+
+        var runner = new Interpreter(source, _variables, null);
+        runner.Run();
+
+        Assert.Equal(1d, _variables["n"]);
+    }
+
+    [Fact]
+    public void CommandIf_TrueBranchSkipsElseBody()
+    {
+        const string source = """
+                              z 10
+                              { true
+                                z 20
+                              }
+                              {
+                                z 30
+                              }
+                              """;
+
+        var runner = new Interpreter(source, _variables, null);
+        runner.Run();
+
+        Assert.Equal(20d, _variables["z"]);
+    }
+
+    [Fact]
+    public void NestedIfBlocksSelectTheCorrectBranch()
+    {
+        const string source = """
+                              z 0
+                              { true
+                                { false
+                                  z 1
+                                }
+                                {
+                                  z 2
+                                }
+                              }
+                              """;
+
+        var runner = new Interpreter(source, _variables, null);
+        runner.Run();
+
+        Assert.Equal(2d, _variables["z"]);
+    }
+
+    [Fact]
     public void CommandBreak_WithNoClauseExitsLoopWhenInsideIf()
     {
         const string source = """
