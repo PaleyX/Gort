@@ -22,6 +22,7 @@
     <None Remove="Programs\Primes.txt" />
     <None Remove="Programs\ReverseBits.txt" />
     <None Remove="Programs\ReverseString.txt" />
+    <None Remove="Programs\ScratchPad.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +36,7 @@
     <EmbeddedResource Include="Programs\Primes.txt" />
     <EmbeddedResource Include="Programs\ReverseBits.txt" />
     <EmbeddedResource Include="Programs\ReverseString.txt" />
+    <EmbeddedResource Include="Programs\ScratchPad.txt" />
   </ItemGroup>
 
   <ItemGroup>

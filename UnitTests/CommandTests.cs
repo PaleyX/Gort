@@ -192,7 +192,23 @@ public class CommandTests
 
         var ex = Assert.Throws<CompileTimeException>(runner.Run);
         Assert.Equal("Compilation failed with 1 errors.", ex.Message);
-        Assert.Equal("Error compiling program: Loop..Endloop mismatch - line 3" + System.Environment.NewLine, sb.ToString());
+        Assert.Equal("Error compiling program: Loop '[' .. ']' Endloop mismatch - line 3" + System.Environment.NewLine, sb.ToString());
+    }
+
+    [Fact]
+    public void EmptyStackOnEndloop_ThrowsCorrectly()
+    {
+        const string source = """
+                              ] 
+                              """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+
+        var ex = Assert.Throws<CompileTimeException>(runner.Run);
+        Assert.Equal("Compilation failed with 1 errors.", ex.Message);
+        Assert.Equal("Error compiling program: Loop '[' .. ']' Endloop mismatch - line 1" + System.Environment.NewLine, sb.ToString());
     }
 
     [Fact]
@@ -212,7 +228,23 @@ public class CommandTests
 
         var ex = Assert.Throws<CompileTimeException>(runner.Run);
         Assert.Equal("Compilation failed with 1 errors.", ex.Message);
-        Assert.Equal("Error compiling program: If..Endif mismatch - line 4" + System.Environment.NewLine, sb.ToString());
+        Assert.Equal("Error compiling program: If '{' .. '}' Endif mismatch - line 4" + System.Environment.NewLine, sb.ToString());
+    }
+
+    [Fact]
+    public void EmptyStackOnEndif_ThrowsCorrectly()
+    {
+        const string source = """
+                              }
+                              """;
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+
+        var ex = Assert.Throws<CompileTimeException>(runner.Run);
+        Assert.Equal("Compilation failed with 1 errors.", ex.Message);
+        Assert.Equal("Error compiling program: If '{' .. '}' Endif mismatch - line 1" + System.Environment.NewLine, sb.ToString());
     }
 
     [Fact]

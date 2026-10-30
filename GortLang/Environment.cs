@@ -17,5 +17,13 @@ internal class Environment(Action<string> output, Dictionary<string, object?>? v
         return Stack.OfType<T>().FirstOrDefault();
     }
 
+    internal void CheckStack(string message)
+    {
+        if (Stack.Count == 0)
+        {
+            throw new CompileTimeException(message);
+        }
+    }
+
     internal void Output(string text) => output.FormatOutput(text);
 }
