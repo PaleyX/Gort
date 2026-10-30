@@ -108,6 +108,102 @@ public class CommandTests
     }
 
     [Fact]
+    public void CommandBreak_WithFalseClauseContinuesLoop()
+    {
+        const string source = """
+                              n 0
+                              [ n < 3
+                                ! n < 0
+                                n n+1
+                              ]
+                              """;
+
+        var runner = new Interpreter(source, _variables, null);
+        runner.Run();
+
+        Assert.Equal(3d, _variables["n"]);
+    }
+
+    [Fact]
+    public void CommandBreak_ExitsOnlyInnermostLoop()
+    {
+        const string source = """
+                              outer 0
+                              [ outer < 3
+                                inner 0
+                                [ inner < 3
+                                  inner inner+1
+                                  ! inner == 2
+                                ]
+                                outer outer+1
+                              ]
+                              """;
+
+        var runner = new Interpreter(source, _variables, null);
+        runner.Run();
+
+        Assert.Equal(3d, _variables["outer"]);
+        Assert.Equal(2d, _variables["inner"]);
+    }
+
+    [Fact]
+    public void GuardlessLoop_IsValidAndCanBeExitedWithBreak()
+    {
+        const string source = """
+                              n 0
+                              [
+                                n n+1
+                                !
+                              ]
+                              """;
+
+        var runner = new Interpreter(source, _variables, null);
+        runner.Run();
+
+        Assert.Equal(1d, _variables["n"]);
+    }
+
+    [Fact]
+    public void CommandIf_TrueBranchSkipsElseBody()
+    {
+        const string source = """
+                              z 10
+                              { true
+                                z 20
+                              }
+                              {
+                                z 30
+                              }
+                              """;
+
+        var runner = new Interpreter(source, _variables, null);
+        runner.Run();
+
+        Assert.Equal(20d, _variables["z"]);
+    }
+
+    [Fact]
+    public void NestedIfBlocksSelectTheCorrectBranch()
+    {
+        const string source = """
+                              z 0
+                              { true
+                                { false
+                                  z 1
+                                }
+                                {
+                                  z 2
+                                }
+                              }
+                              """;
+
+        var runner = new Interpreter(source, _variables, null);
+        runner.Run();
+
+        Assert.Equal(2d, _variables["z"]);
+    }
+
+    [Fact]
     public void CommandBreak_WithNoClauseExitsLoopWhenInsideIf()
     {
         const string source = """
@@ -192,7 +288,21 @@ public class CommandTests
 
         var ex = Assert.Throws<CompileTimeException>(runner.Run);
         Assert.Equal("Compilation failed with 1 errors.", ex.Message);
-        Assert.Equal("Error compiling program: Loop..Endloop mismatch - line 3" + System.Environment.NewLine, sb.ToString());
+        Assert.Equal("Error compiling program: Loop '[' .. ']' Endloop mismatch - line 3" + System.Environment.NewLine, sb.ToString());
+    }
+
+    [Fact]
+    public void EmptyStackOnEndloop_ThrowsCorrectly()
+    {
+        const string source = "]";
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+
+        var ex = Assert.Throws<CompileTimeException>(runner.Run);
+        Assert.Equal("Compilation failed with 1 errors.", ex.Message);
+        Assert.Equal("Error compiling program: Loop '[' .. ']' Endloop mismatch - line 1" + System.Environment.NewLine, sb.ToString());
     }
 
     [Fact]
@@ -212,15 +322,27 @@ public class CommandTests
 
         var ex = Assert.Throws<CompileTimeException>(runner.Run);
         Assert.Equal("Compilation failed with 1 errors.", ex.Message);
-        Assert.Equal("Error compiling program: If..Endif mismatch - line 4" + System.Environment.NewLine, sb.ToString());
+        Assert.Equal("Error compiling program: If '{' .. '}' Endif mismatch - line 4" + System.Environment.NewLine, sb.ToString());
+    }
+
+    [Fact]
+    public void EmptyStackOnEndif_ThrowsCorrectly()
+    {
+        const string source = "}";
+
+        var sb = new StringBuilder();
+
+        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+
+        var ex = Assert.Throws<CompileTimeException>(runner.Run);
+        Assert.Equal("Compilation failed with 1 errors.", ex.Message);
+        Assert.Equal("Error compiling program: If '{' .. '}' Endif mismatch - line 1" + System.Environment.NewLine, sb.ToString());
     }
 
     [Fact]
     public void NoEndif_ThrowsCorrectly()
     {
-        const string source = """
-                              { true
-                              """;
+        const string source = "{ true";
 
         var sb = new StringBuilder();
 

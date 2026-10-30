@@ -1,4 +1,4 @@
-^ set s as the string to reverse
+# set s as the string to reverse
 
 r ""
 

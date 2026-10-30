@@ -9,7 +9,13 @@ internal sealed class CommandEndif : CommandBase
 
     internal override void Compile(string line)
     {
-        switch (Environment.Stack.Peek())
+        const string mismatch = "If '{' .. '}' Endif mismatch";
+
+        Environment.CheckStack(mismatch);
+
+        var command = Environment.Stack.Pop();
+
+        switch (command)
         {
             case CommandIf i:
                 If = i;
@@ -20,10 +26,8 @@ internal sealed class CommandEndif : CommandBase
                 e.If.Jump = e;
                 break;
             default:
-                throw new CompileTimeException("If..Endif mismatch");
+                throw new CompileTimeException(mismatch);
         }
-
-        Environment.Stack.Pop();
     }
 
     internal override CommandBase? Execute() => Next;

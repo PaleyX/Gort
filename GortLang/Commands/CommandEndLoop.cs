@@ -16,16 +16,19 @@ internal sealed class CommandEndLoop : CommandBase
             throw new CompileTimeException("Superfluous text on endloop");
         }
 
-        if(Environment.Stack.Peek() is CommandLoop loop)
+        const string mismatch = "Loop '[' .. ']' Endloop mismatch";
+
+        Environment.CheckStack(mismatch);
+
+        if (Environment.Stack.Pop() is CommandLoop loop)
         {
             _loop = loop;
             _loop.Jump = this;
             _loop.SetBreaks(this);
-            Environment.Stack.Pop();
         }
         else
         {
-            throw new CompileTimeException("Loop..Endloop mismatch");
+            throw new CompileTimeException(mismatch);
         }
     }
 

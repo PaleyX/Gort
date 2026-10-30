@@ -52,11 +52,16 @@ public class Interpreter(string? source, Dictionary<string, object?>? variables,
 
         try
         {
-            var lines = _source.Split([System.Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
+            var lines = _source.Split(System.Environment.NewLine);
 
             foreach (var rawLine in lines)
             {
                 ++lineNumber;
+
+                if(string.IsNullOrWhiteSpace(rawLine))
+                {
+                    continue;
+                }
 
                 var line = rawLine.Trim().StripNumericUnderscores().RemoveComments();
 
