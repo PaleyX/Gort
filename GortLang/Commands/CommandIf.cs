@@ -20,7 +20,7 @@ internal sealed class CommandIf : CommandBase
 
     internal override CommandBase? Execute()
     {
-        var result = _runner?.Interpret(Environment.Variables);
+        var result = RunExpression(_runner);
 
         if (result is bool b)
         {

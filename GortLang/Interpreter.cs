@@ -24,7 +24,7 @@ public class Interpreter(string? source, Dictionary<string, object?>? variables,
         RunProgram(environment);
     }
 
-    private static void RunProgram(Environment environment)
+    private static object? RunProgram(Environment environment)
     {
         CommandBase? command = null;
 
@@ -45,6 +45,8 @@ public class Interpreter(string? source, Dictionary<string, object?>? variables,
         {
             throw new RunTimeException($"Expression error on line {command?.LineNumber.ToString() ?? "<unknown>"}: {ee.Message}");
         }
+
+        return environment.LastResult;
     }
 
 

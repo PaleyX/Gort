@@ -24,4 +24,6 @@ internal class Environment(Dictionary<string, object?>? variables, Type? functio
             throw new CompileTimeException(message);
         }
     }
+
+    internal object? LastResult { get; set; }
 }

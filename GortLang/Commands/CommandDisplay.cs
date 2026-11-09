@@ -25,7 +25,7 @@ internal sealed class CommandDisplay : CommandBase
 
     internal override CommandBase? Execute()
     {
-        var result = _runner.Interpret(Environment.Variables);
+        var result = RunExpression(_runner);
         var output = result?.ToString() ?? "nil";
 
         if (_newLine)
