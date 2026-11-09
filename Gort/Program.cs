@@ -23,6 +23,9 @@ public class Program
             {
                 switch (command[0])
                 {
+                    case '?':
+                        ShowHelp();
+                        break;
                     case '$':
                         GetVariable(command[1..]);
                         break;
@@ -50,6 +53,16 @@ public class Program
                 Tools.WriteError($"Error: {ex.Message}");
             }
         }
+    }
+
+    private static void ShowHelp()
+    {
+        Tools.WriteInfo("Available commands:");
+        Tools.WriteInfo("  ? - Show this help message");
+        Tools.WriteInfo("  $<variable> <expression> - Set a variable");
+        Tools.WriteInfo("  &<program> - Run an embedded program");
+        Tools.WriteInfo("  &&<program> - Run an embedded program with timing");
+        Tools.WriteInfo("  <expression> - Evaluate an expression");
     }
 
     private static void GetVariable(string line)
