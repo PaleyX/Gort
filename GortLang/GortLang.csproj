@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PaleyExpressions" Version="1.1.0" />
+    <PackageReference Include="PaleyExpressions" Version="1.1.2-pre" />
   </ItemGroup>
 
 </Project>
