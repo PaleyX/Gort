@@ -19,6 +19,7 @@
     <None Remove="Programs\FizzBuzz.txt" />
     <None Remove="Programs\IsPalindrome.txt" />
     <None Remove="Programs\Longest.txt" />
+    <None Remove="Programs\Mandelbrot.txt" />
     <None Remove="Programs\Million.txt" />
     <None Remove="Programs\Primes.txt" />
     <None Remove="Programs\ReverseBits.txt" />
@@ -33,6 +34,7 @@
     <EmbeddedResource Include="Programs\FizzBuzz.txt" />
     <EmbeddedResource Include="Programs\IsPalindrome.txt" />
     <EmbeddedResource Include="Programs\Longest.txt" />
+    <EmbeddedResource Include="Programs\Mandelbrot.txt" />
     <EmbeddedResource Include="Programs\Million.txt" />
     <EmbeddedResource Include="Programs\Primes.txt" />
     <EmbeddedResource Include="Programs\ReverseBits.txt" />

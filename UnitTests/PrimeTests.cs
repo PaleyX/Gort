@@ -3,16 +3,18 @@ using System.Text;
 
 namespace UnitTests;
 
+[Collection("Non-Parallel Collection")]
 public class PrimeTests
 {
     [Fact]
     public void PrimeProgramWorks()
     {
-        var sb = new StringBuilder();
+        using var sw = new StringWriter();
+        var savedOut = Console.Out;
+        Console.SetOut(sw);
 
-        // run the Primes program, outputting to the StringBuilder
         var source = Gort.Tools.GetEmbeddedProgram("Primes");
-        var runner = new Interpreter(source, null, typeof(Gort.Functions), t => sb.Append(t));
+        var runner = new Interpreter(source, null, typeof(Gort.Functions));
         runner.Run();
 
         // C# Primes 
@@ -27,7 +29,9 @@ public class PrimeTests
             }
         }
 
-        Assert.Equal(sbC.ToString(), sb.ToString());
+        Assert.Equal(sbC.ToString(), sw.ToString());
+
+        Console.SetOut(savedOut);
     }
 
     private static bool IsPrime(int num)

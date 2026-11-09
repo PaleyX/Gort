@@ -27,16 +27,6 @@ internal static partial class Extensions
         }
     }
 
-    internal static void FormatOutput(this Action<string> output, string text)
-    {
-        output(text);
-
-        if (output != (Action<string>)Console.WriteLine)
-        {
-            output(System.Environment.NewLine);
-        }
-    }
-
     [GeneratedRegex(@"([""'])(?:\\.|(?!\1).)*\1|(?<=\d)_(?=\d)")]
     private static partial Regex NumericUnderscoresRegex();
 

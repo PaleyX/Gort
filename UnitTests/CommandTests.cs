@@ -3,6 +3,7 @@ using GortLang;
 
 namespace UnitTests;
 
+[Collection("Non-Parallel Collection")]
 public class CommandTests
 {
     private readonly Dictionary<string, object?> _variables = new();
@@ -17,13 +18,17 @@ public class CommandTests
                               }
                               """;
 
-        var sb = new StringBuilder();
-
-        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        using var sw = new StringWriter();
+        var savedOut = Console.Out;
+        Console.SetOut(sw);
+        
+        var runner = new Interpreter(source, _variables, null);
         runner.Run();
 
-        Assert.Equal(0, sb.Length);
+        Assert.Equal(0, sw.ToString().Length);
         Assert.Equal(10d, _variables["z"]);
+
+        Console.SetOut(savedOut);
     }
 
     [Fact]
@@ -36,13 +41,17 @@ public class CommandTests
                               }
                               """;
 
-        var sb = new StringBuilder();
+        using var sw = new StringWriter();
+        var savedOut = Console.Out;
+        Console.SetOut(sw);
 
-        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        var runner = new Interpreter(source, _variables, null);
         runner.Run();
 
-        Assert.Equal(0, sb.Length);
+        Assert.Equal(0, sw.ToString().Length);
         Assert.Equal(99d, _variables["z"]);
+
+        Console.SetOut(savedOut);
     }
 
     [Fact]
@@ -58,13 +67,17 @@ public class CommandTests
                               }
                               """;
 
-        var sb = new StringBuilder();
+        using var sw = new StringWriter();
+        var savedOut = Console.Out;
+        Console.SetOut(sw);
 
-        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        var runner = new Interpreter(source, _variables, null);
         runner.Run();
 
-        Assert.Equal(0, sb.Length);
+        Assert.Equal(0, sw.ToString().Length);
         Assert.Equal(55d, _variables["z"]);
+
+        Console.SetOut(savedOut);
     }
 
     [Fact]
@@ -78,13 +91,17 @@ public class CommandTests
                               ]
                               """;
 
-        var sb = new StringBuilder();
+        using var sw = new StringWriter();
+        var savedOut = Console.Out;
+        Console.SetOut(sw);
 
-        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        var runner = new Interpreter(source, _variables, null);
         runner.Run();
 
-        Assert.Equal(0, sb.Length);
+        Assert.Equal(0, sw.ToString().Length);
         Assert.Equal(0d, _variables["n"]);
+
+        Console.SetOut(savedOut);
     }
 
     [Fact]
@@ -98,13 +115,17 @@ public class CommandTests
                               ]
                               """;
 
-        var sb = new StringBuilder();
+        using var sw = new StringWriter();
+        var savedOut = Console.Out;
+        Console.SetOut(sw);
 
-        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        var runner = new Interpreter(source, _variables, null);
         runner.Run();
 
-        Assert.Equal(0, sb.Length);
+        Assert.Equal(0, sw.ToString().Length);
         Assert.Equal(6d, _variables["n"]);
+
+        Console.SetOut(savedOut);
     }
 
     [Fact]
@@ -216,13 +237,17 @@ public class CommandTests
                               ]
                               """;
 
-        var sb = new StringBuilder();
+        using var sw = new StringWriter();
+        var savedOut = Console.Out;
+        Console.SetOut(sw);
 
-        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        var runner = new Interpreter(source, _variables, null);
         runner.Run();
 
-        Assert.Equal(0, sb.Length);
+        Assert.Equal(0, sw.ToString().Length);
         Assert.Equal(6d, _variables["n"]);
+
+        Console.SetOut(savedOut);
     }
 
     [Fact]
@@ -232,17 +257,24 @@ public class CommandTests
                               n 10
                               : n
                               : n*n
+                              :: "hello"
+                              :: " "
+                              :: "world"
                               """;
 
-        var sb = new StringBuilder();
+        using var sw = new StringWriter();
+        var savedOut = Console.Out;
+        Console.SetOut(sw);
 
-        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        var runner = new Interpreter(source, _variables, null);
         runner.Run();
 
         var nl = System.Environment.NewLine;
 
-        Assert.Equal(9, sb.Length);
-        Assert.Equal($"10{nl}100{nl}", sb.ToString());
+        Assert.Equal(20, sw.ToString().Length);
+        Assert.Equal($"10{nl}100{nl}hello world", sw.ToString());
+
+        Console.SetOut(savedOut);
     }
 
     [Fact]
@@ -257,18 +289,22 @@ public class CommandTests
                               s "Hello"
                               """;
 
-        var sb = new StringBuilder();
+        using var sw = new StringWriter();
+        var savedOut = Console.Out;
+        Console.SetOut(sw);
 
-        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        var runner = new Interpreter(source, _variables, null);
         runner.Run();
 
-        Assert.Equal(0, sb.Length);
+        Assert.Equal(0, sw.ToString().Length);
         Assert.Equal(10d, _variables["a"]);
         Assert.Equal(20.89d, _variables["b"]);
         Assert.Equal(30.89d, _variables["c"]);
         Assert.Equal(30890000d, _variables["d"]);
         Assert.Equal(true, _variables["tf"]);
         Assert.Equal("Hello", _variables["s"]);
+
+        Console.SetOut(savedOut);
     }
 
     [Fact]
@@ -282,13 +318,17 @@ public class CommandTests
                               ] 
                               """;
 
-        var sb = new StringBuilder();
+        using var sw = new StringWriter();
+        var savedOut = Console.Out;
+        Console.SetOut(sw);
 
-        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        var runner = new Interpreter(source, _variables, null);
 
         var ex = Assert.Throws<CompileTimeException>(runner.Run);
         Assert.Equal("Compilation failed with 1 errors.", ex.Message);
-        Assert.Equal("Error compiling program: Loop '[' .. ']' Endloop mismatch - line 3" + System.Environment.NewLine, sb.ToString());
+        Assert.Equal("Error compiling program: Loop '[' .. ']' Endloop mismatch - line 3" + System.Environment.NewLine, sw.ToString());
+
+        Console.SetOut(savedOut);
     }
 
     [Fact]
@@ -296,13 +336,17 @@ public class CommandTests
     {
         const string source = "]";
 
-        var sb = new StringBuilder();
+        using var sw = new StringWriter();
+        var savedOut = Console.Out;
+        Console.SetOut(sw);
 
-        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        var runner = new Interpreter(source, _variables, null);
 
         var ex = Assert.Throws<CompileTimeException>(runner.Run);
         Assert.Equal("Compilation failed with 1 errors.", ex.Message);
-        Assert.Equal("Error compiling program: Loop '[' .. ']' Endloop mismatch - line 1" + System.Environment.NewLine, sb.ToString());
+        Assert.Equal("Error compiling program: Loop '[' .. ']' Endloop mismatch - line 1" + System.Environment.NewLine, sw.ToString());
+
+        Console.SetOut(savedOut);
     }
 
     [Fact]
@@ -316,13 +360,17 @@ public class CommandTests
                               ] 
                               """;
 
-        var sb = new StringBuilder();
+        using var sw = new StringWriter();
+        var savedOut = Console.Out;
+        Console.SetOut(sw);
 
-        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        var runner = new Interpreter(source, _variables, null);
 
         var ex = Assert.Throws<CompileTimeException>(runner.Run);
         Assert.Equal("Compilation failed with 1 errors.", ex.Message);
-        Assert.Equal("Error compiling program: If '{' .. '}' Endif mismatch - line 4" + System.Environment.NewLine, sb.ToString());
+        Assert.Equal("Error compiling program: If '{' .. '}' Endif mismatch - line 4" + System.Environment.NewLine, sw.ToString());
+
+        Console.SetOut(savedOut);
     }
 
     [Fact]
@@ -330,13 +378,17 @@ public class CommandTests
     {
         const string source = "}";
 
-        var sb = new StringBuilder();
+        using var sw = new StringWriter();
+        var savedOut = Console.Out;
+        Console.SetOut(sw);
 
-        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        var runner = new Interpreter(source, _variables, null);
 
         var ex = Assert.Throws<CompileTimeException>(runner.Run);
         Assert.Equal("Compilation failed with 1 errors.", ex.Message);
-        Assert.Equal("Error compiling program: If '{' .. '}' Endif mismatch - line 1" + System.Environment.NewLine, sb.ToString());
+        Assert.Equal("Error compiling program: If '{' .. '}' Endif mismatch - line 1" + System.Environment.NewLine, sw.ToString());
+
+        Console.SetOut(savedOut);
     }
 
     [Fact]
@@ -344,13 +396,17 @@ public class CommandTests
     {
         const string source = "{ true";
 
-        var sb = new StringBuilder();
+        using var sw = new StringWriter();
+        var savedOut = Console.Out;
+        Console.SetOut(sw);
 
-        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        var runner = new Interpreter(source, _variables, null);
 
         var ex = Assert.Throws<CompileTimeException>(runner.Run);
         Assert.Equal("Compilation failed with 1 errors.", ex.Message);
-        Assert.Equal("Error: Unmatched '{' - line 1" + System.Environment.NewLine, sb.ToString());
+        Assert.Equal("Error: Unmatched '{' - line 1" + System.Environment.NewLine, sw.ToString());
+
+        Console.SetOut(savedOut);
     }
 
     [Fact]
@@ -363,13 +419,17 @@ public class CommandTests
                               }
                               """;
 
-        var sb = new StringBuilder();
+        using var sw = new StringWriter();
+        var savedOut = Console.Out;
+        Console.SetOut(sw);
 
-        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        var runner = new Interpreter(source, _variables, null);
 
         var ex = Assert.Throws<CompileTimeException>(runner.Run);
         Assert.Equal("Compilation failed with 1 errors.", ex.Message);
-        Assert.Equal("Error compiling program: An else: '{' must immediately follow an endif: '}' - line 3" + System.Environment.NewLine, sb.ToString());
+        Assert.Equal("Error compiling program: An else: '{' must immediately follow an endif: '}' - line 3" + System.Environment.NewLine, sw.ToString());
+
+        Console.SetOut(savedOut);
     }
 }
 

@@ -89,7 +89,7 @@ public class Program
     
     private static void RunProgram(string programText)
     {
-        var runner = new Interpreter(programText, _variables, typeof(Functions), Console.WriteLine);
+        var runner = new Interpreter(programText, _variables, typeof(Functions));
         runner.Run();
     }
 }
