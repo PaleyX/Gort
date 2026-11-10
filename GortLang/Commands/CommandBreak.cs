@@ -34,7 +34,7 @@ internal sealed class CommandBreak : CommandBase
             return Jump.Next;
         }
 
-        var result = _runner.Interpret(Environment.Variables);
+        var result = RunExpression(_runner);
 
         if (result is bool b)
         {

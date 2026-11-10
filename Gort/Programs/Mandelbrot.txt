@@ -1,0 +1,35 @@
+
+# Render the Mandelbrot set as rows of characters.
+width 80
+height 32
+maxIterations 40
+
+rowIndex 0
+[ rowIndex < height
+	row ""
+	column 0
+	cy -1.2 + (rowIndex / height) * 2.4
+
+	[ column < width
+		cx -2.5 + (column / width) * 3.5
+		zx 0
+		zy 0
+		iter 0
+
+		[ zx * zx + zy * zy < 4 and iter < maxIterations
+			nextZx zx * zx - zy * zy + cx
+			nextZy 2 * zx * zy + cy
+			zx nextZx
+			zy nextZy
+			iter iter + 1
+		]
+
+		character cond(iter>35,"@", iter>30,"#", iter>25,"8", iter>20,"o", iter>15,"*", iter>10,":", iter>5,".", true, " ")
+
+		row row + character
+		column column + 1
+	]
+
+	: trimend(row)
+	rowIndex rowIndex + 1
+]

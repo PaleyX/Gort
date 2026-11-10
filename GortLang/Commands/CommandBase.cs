@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using PaleyExpressions.Runners;
 
 namespace GortLang.Commands;
 
@@ -47,5 +48,12 @@ internal abstract class CommandBase(Environment environment, int lineNumber)
         }
 
         return list;
+    }
+
+    internal object? RunExpression(IRunner runner)
+    {
+        var result = runner.Interpret(Environment.Variables);
+        Environment.LastResult = result;
+        return result;
     }
 }

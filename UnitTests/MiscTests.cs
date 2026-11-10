@@ -1,5 +1,4 @@
 ﻿using GortLang;
-using System.Text;
 using GortLang.Commands;
 
 namespace UnitTests;
@@ -26,11 +25,9 @@ public class MiscTests
                      ]
                      """;
 
-        var sb = new StringBuilder();
-
         _variables["n"] = n;
 
-        var runner = new Interpreter(source, _variables, null, t => sb.Append(t));
+        var runner = new Interpreter(source, _variables, null);
         runner.Run();
 
         Assert.Equal(expected, _variables["c"]);
@@ -45,7 +42,7 @@ public class MiscTests
     [InlineData("__")]
     public void ValidIdentifiers_Pass(string text)
     {
-        Assert.True(Tools.IsIdentifier(text));
+        Assert.True(GortLang.Tools.IsIdentifier(text));
     }
 
     [Theory]
@@ -57,7 +54,7 @@ public class MiscTests
     [InlineData("+k")]
     public void InvalidIdentifiers_DoNotPass(string text)
     {
-        Assert.False(Tools.IsIdentifier(text));
+        Assert.False(GortLang.Tools.IsIdentifier(text));
     }
 
     [Theory]
@@ -70,14 +67,14 @@ public class MiscTests
     [InlineData(typeof(CommandAssign), '$')]
     public void GetSigil_ReturnsCorrectSigil(Type commandType, char expectedSigil)
     {
-        var actualSigil = Tools.GetSigil(commandType);
+        var actualSigil = GortLang.Tools.GetSigil(commandType);
         Assert.Equal(expectedSigil, actualSigil);
     }
 
     [Fact]
     public void GetSigil_ReturnsXIfNoSigil()
     {
-        var actualSigil = Tools.GetSigil(typeof(CommandElse));
+        var actualSigil = GortLang.Tools.GetSigil(typeof(CommandElse));
         Assert.Equal('X', actualSigil);
     }
 }

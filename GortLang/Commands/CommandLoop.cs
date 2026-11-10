@@ -29,7 +29,7 @@ internal sealed class CommandLoop : CommandBase
             return Next;
         }
 
-        var result = _runner.Interpret(Environment.Variables);
+        var result = RunExpression(_runner);
 
         if(result is bool b)
         {

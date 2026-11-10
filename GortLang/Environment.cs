@@ -2,7 +2,7 @@
 
 namespace GortLang;
 
-internal class Environment(Action<string> output, Dictionary<string, object?>? variables, Type? functions)
+internal class Environment(Dictionary<string, object?>? variables, Type? functions)
 {
     internal readonly Type? Functions = functions;
 
@@ -25,5 +25,5 @@ internal class Environment(Action<string> output, Dictionary<string, object?>? v
         }
     }
 
-    internal void Output(string text) => output.FormatOutput(text);
+    internal object? LastResult { get; set; }
 }

@@ -20,12 +20,7 @@ internal static class Functions
     [Function("assert")]
     public static bool Assert(bool test, string text)
     {
-        if (!test)
-        {
-            throw new AssertException(text);
-        }
-
-        return test;
+        return test ? test : throw new AssertException(text);
     }
 
     [Function("car")]
@@ -59,4 +54,13 @@ internal static class Functions
 
         return null;
     }
+
+    [Function("floor")]
+    public static double Floor(double n) => Math.Floor(n);
+
+    [Function("char")]
+    public static string Char(double n) => ((char)n).ToString();
+
+    [Function("trimend")]
+    public static string TrimEnd(string text) => text.TrimEnd();
 }

@@ -1,17 +1,17 @@
 ﻿using GortLang.Commands;
+using PaleyExpressions;
 
 namespace GortLang;
 
-public class Interpreter(string? source, Dictionary<string, object?>? variables, Type? functions, Action<string>? output = null)
+public class Interpreter(string? source, Dictionary<string, object?>? variables, Type? functions)
 {
     private readonly string _source = source ?? throw new ArgumentNullException(nameof(source));
-    private readonly Action<string> _output = output ?? Console.WriteLine;
 
     private int _errors;
 
-    public void Run()
+    public object? Run()
     {
-        var environment = new Environment(_output, variables, functions);
+        var environment = new Environment(variables, functions);
         _errors = 0;
 
         Compile(environment);
@@ -21,10 +21,10 @@ public class Interpreter(string? source, Dictionary<string, object?>? variables,
             throw new CompileTimeException($"Compilation failed with {_errors} errors.");
         }
 
-        RunProgram(environment);
+        return RunProgram(environment);
     }
 
-    private static void RunProgram(Environment environment)
+    private static object? RunProgram(Environment environment)
     {
         CommandBase? command = null;
 
@@ -41,6 +41,12 @@ public class Interpreter(string? source, Dictionary<string, object?>? variables,
         {
             throw new RunTimeException($"Assert on line {command?.LineNumber.ToString() ?? "<unknown>"}: {ae.Message}");
         }
+        catch (ExpressionException ee)
+        {
+            throw new RunTimeException($"Expression error on line {command?.LineNumber.ToString() ?? "<unknown>"}: {ee.Message}");
+        }
+
+        return environment.LastResult;
     }
 
 
@@ -116,7 +122,7 @@ public class Interpreter(string? source, Dictionary<string, object?>? variables,
 
     private void Error(string text)
     {
-        _output.FormatOutput(text);
+        Console.WriteLine(text);
 
         ++_errors;
     }
