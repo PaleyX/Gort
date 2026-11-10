@@ -9,7 +9,7 @@ public class Interpreter(string? source, Dictionary<string, object?>? variables,
 
     private int _errors;
 
-    public void Run()
+    public object? Run()
     {
         var environment = new Environment(variables, functions);
         _errors = 0;
@@ -21,7 +21,7 @@ public class Interpreter(string? source, Dictionary<string, object?>? variables,
             throw new CompileTimeException($"Compilation failed with {_errors} errors.");
         }
 
-        RunProgram(environment);
+        return RunProgram(environment);
     }
 
     private static object? RunProgram(Environment environment)
